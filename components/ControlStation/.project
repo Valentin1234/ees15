@@ -3,6 +3,7 @@
 	<name>ControlStation</name>
 	<comment></comment>
 	<projects>
+		<project>ComInterface</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
