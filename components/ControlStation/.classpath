@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ComInterface"/>
-	<classpathentry kind="lib" path="/home/alex/ees-projekt/components/ControlStation/lib/miglayout15-swing.jar" sourcepath="miglayout-src.zip"/>
+	<classpathentry kind="lib" path="/home/alex/ees-projekt/components/ControlStation/lib/miglayout15-swing.jar" sourcepath="/home/alex/ees-projekt/components/ControlStation/lib/miglayout-src.zip"/>
+	<classpathentry kind="lib" path="lib/jlfgr-1_0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
