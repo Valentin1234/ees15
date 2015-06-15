@@ -3,6 +3,8 @@
  */
 package de.ees.group1.model;
 
+import java.io.Serializable;
+
 /**
  * This class represents a requested step in production.
  * It has several attributes i.e. the type of work or the
@@ -10,12 +12,17 @@ package de.ees.group1.model;
  * @author alex
  *
  */
-public class ProductionStep {
+public class ProductionStep implements Serializable {
 	
 	/**
-	 * The type of the step to be preformed
+	 * version uid for serialization
 	 */
-	private WorkStation.Type _type;
+	private static final long serialVersionUID = 5310500383208577174L;
+
+	/**
+	 * The type of the step to be performed
+	 */
+	private WorkStationType _type;
 	
 	/**
 	 * The minimum quality level of the tool performing
@@ -27,12 +34,24 @@ public class ProductionStep {
 	 * The time this step will consume
 	 */
 	private int _workTimeSeconds;
+	
+	public ProductionStep() {
+		_type = WorkStationType.NONE;
+		_minQualityLevel = -1;
+		_workTimeSeconds = -1;
+	}
+	
+	public ProductionStep(WorkStationType type, int minQualLevel, int workTimeSeconds) {
+		setType(type);
+		setMinQualityLevel(minQualLevel);
+		setWorkTimeSeconds(workTimeSeconds);
+	}
 
-	public WorkStation.Type getType() {
+	public WorkStationType getType() {
 		return _type;
 	}
 
-	public void setType(WorkStation.Type _type) {
+	public void setType(WorkStationType _type) {
 		this._type = _type;
 	}
 
@@ -41,6 +60,8 @@ public class ProductionStep {
 	}
 
 	public void setMinQualityLevel(int _minQualityLevel) {
+		if(_minQualityLevel < 1 || _minQualityLevel > 4)
+			throw new IllegalArgumentException("Quality level has to be in range from 1 to 4");
 		this._minQualityLevel = _minQualityLevel;
 	}
 
@@ -49,6 +70,8 @@ public class ProductionStep {
 	}
 
 	public void setWorkTimeSeconds(int _workTimeSeconds) {
+		if(_workTimeSeconds < 0)
+			throw new IllegalArgumentException("Worktime has to be greater than zero");
 		this._workTimeSeconds = _workTimeSeconds;
 	}
 }

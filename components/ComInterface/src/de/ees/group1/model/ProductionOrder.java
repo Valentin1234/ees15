@@ -1,6 +1,6 @@
 package de.ees.group1.model;
 
-import java.util.List;
+import java.util.LinkedList;
 
 /**
  * This class represents a production order
@@ -9,20 +9,21 @@ import java.util.List;
  * @author alex
  *
  */
-public class ProductionOrder {
+public class ProductionOrder extends LinkedList<ProductionStep> {
 	
+	/**
+	 * version uid for serialization
+	 */
+	private static final long serialVersionUID = -8252618943092239548L;
+
 	/**
 	 * order id (1-99)
 	 */
 	private int _id;
-	
-	/**
-	 * ordered list of steps included in this order
-	 */
-	private List<ProductionStep> _steps;
-	/*
-	 * TODO: implement data structure for production orders
-	 */
+
+	public ProductionOrder(int id){
+		_id = id;
+	}
 
 	public int getId() {
 		return _id;
@@ -33,13 +34,4 @@ public class ProductionOrder {
 			throw new IllegalArgumentException("The order ID must be a number between 0 and 100");
 		this._id = id;
 	}
-
-	public List<ProductionStep> getSteps() {
-		return _steps;
-	}
-
-	public void setSteps(List<ProductionStep> _steps) {
-		this._steps = _steps;
-	}
-
 }
