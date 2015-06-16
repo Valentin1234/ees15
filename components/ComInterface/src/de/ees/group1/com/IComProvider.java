@@ -11,11 +11,11 @@ import de.ees.group1.model.ProductionOrder;
  */
 public interface IComProvider {
 	
-	void Register(IControlStation cs);
+	void register(IControlStation cs);
 	
-	void Register(IWorkStation ws);
+	void register(IWorkStation ws);
 	
-	void TransmitProductionOder(ProductionOrder order);
+	void transmitProductionOder(ProductionOrder order);
 	
 	/*
 	 * TODO: more still to be specified
