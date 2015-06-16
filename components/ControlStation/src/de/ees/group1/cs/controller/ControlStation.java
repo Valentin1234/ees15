@@ -24,4 +24,10 @@ public class ControlStation implements IGUIListener, IControlStation {
 		
 	}
 
+	@Override
+	public int getNextOrderId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

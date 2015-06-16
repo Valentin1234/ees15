@@ -7,5 +7,7 @@ public interface IGUIListener {
 	public void orderCreatedAction(ProductionOrder order);
 	
 	public void orderRemovedAction(int orderID);
+	
+	public int getNextOrderId();
 
 }
