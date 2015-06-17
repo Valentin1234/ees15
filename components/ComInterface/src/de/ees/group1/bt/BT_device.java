@@ -1,11 +1,8 @@
 package de.ees.group1.bt;
 
-import java.io.*;
-import java.math.BigInteger;
-
-import javax.bluetooth.*;
-import javax.microedition.io.*;
-import javax.obex.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;

@@ -1,7 +1,6 @@
 package de.ees.group1.bt;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import javax.bluetooth.RemoteDevice;
 
