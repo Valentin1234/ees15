@@ -15,7 +15,7 @@ public interface IComProvider {
 	
 	void register(IWorkStation ws);
 	
-	void transmitProductionOder(ProductionOrder order);
+	void transmitProductionOrder(ProductionOrder order);
 	
 	/*
 	 * TODO: more still to be specified
