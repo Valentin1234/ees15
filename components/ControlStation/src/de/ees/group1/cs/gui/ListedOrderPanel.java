@@ -1,7 +1,9 @@
 package de.ees.group1.cs.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -28,6 +30,7 @@ public class ListedOrderPanel extends JPanel {
 		// layout options
 		setLayout(new MigLayout("", "[][][right,grow][]", "[]"));
 		setMinimumSize(new Dimension(250,0));
+		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.black));
 		
 		add(new JLabel("ID:"));
 		
@@ -51,10 +54,4 @@ public class ListedOrderPanel extends JPanel {
 	public int getID() {
 		return id;
 	}
-	
-	@Override
-	public Dimension getPreferredSize() {
-		return new Dimension(getParent().getSize().width, super.getPreferredSize().height);
-	}
-
 }
