@@ -1,13 +1,11 @@
 package de.ees.group1.cs.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -51,7 +49,16 @@ public class MainWindow {
 	public MainWindow() {
 		initialize();
 		
-
+		//null object to prevent checks for "null"
+		listener = new IGUIListener() {
+			@Override
+			public void orderRemovedAction(int orderID) {}
+			@Override
+			public void orderCreatedAction(ProductionOrder order) {}
+			@Override
+			public int getNextOrderId() { return -1;}
+		};
+		
 		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(20)), "grow");
 		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(21)), "grow");
 		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(22)), "grow");
@@ -64,7 +71,7 @@ public class MainWindow {
 	private void initialize() {
 		frmControlstation = new JFrame();
 		frmControlstation.setTitle("ControlStation");
-		frmControlstation.setBounds(100, 100, 480, 400);
+		frmControlstation.setBounds(100, 100, 800, 600);
 		frmControlstation.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmControlstation.getContentPane().setLayout(new BoxLayout(frmControlstation.getContentPane(), BoxLayout.X_AXIS));
 		
@@ -96,10 +103,12 @@ public class MainWindow {
 		orderListPanel.setLayout(new MigLayout("wrap 1", "grow", ""));
 		
 		JScrollPane scrollPane = new JScrollPane(orderListPanel);
+		scrollPane.setMinimumSize(new Dimension(300,-1));
 		scrollPane.setBorder(new TitledBorder(null, "anstehende Auftr\u00E4ge", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel.add(scrollPane, "cell 0 0,grow");
 		
 		JPanel panel_2 = new JPanel();
+		panel_2.setMinimumSize(new Dimension(300, -1));
 		panel_2.setBorder(new TitledBorder(null, "aktueller Auftrag", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_2.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		panel.add(panel_2, "cell 1 0,grow");
@@ -134,7 +143,7 @@ public class MainWindow {
 	}
 	
 	private void showAddOrderDialog() {
-		JDialog prodOrderDialog = new ProductionOrderDialog(listener != null ? listener.getNextOrderId() : -1);
+		JDialog prodOrderDialog = new ProductionOrderDialog(listener.getNextOrderId());
 		prodOrderDialog.setModal(true);
 		prodOrderDialog.setVisible(true);
 	}

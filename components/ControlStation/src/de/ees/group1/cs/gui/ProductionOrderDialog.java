@@ -1,11 +1,14 @@
 package de.ees.group1.cs.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
@@ -31,18 +34,34 @@ public class ProductionOrderDialog extends JDialog {
 		setBounds(100, 100, 450, 300);
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		contentPanel.setLayout(new MigLayout("", "[]", "[]"));
+		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 		{
+			JPanel idPanel = new JPanel();
+			idPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+			idPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+			
 			JLabel lblId = new JLabel("ID:");
-			contentPanel.add(lblId, "cell 0 0");
+			idPanel.add(lblId);
 			
 			txtId = new JTextField(2);
 			txtId.setEditable(false);
 			txtId.setText(String.valueOf(id));
-			contentPanel.add(txtId, "wrap");
+			idPanel.add(txtId);
 			
+			contentPanel.add(idPanel);
+			
+			JLabel lblSteps = new JLabel("Bearbeitungsschritte:");
+			lblSteps.setAlignmentX(Component.LEFT_ALIGNMENT);
+			contentPanel.add(lblSteps);
+			
+			JPanel stepListPanel = new JPanel();
+			
+			JScrollPane stepListScrollPane = new JScrollPane(stepListPanel);
+			stepListScrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+			stepListScrollPane.setPreferredSize(stepListScrollPane.getMaximumSize());
+			contentPanel.add(stepListScrollPane);
 			
 		}
 		{
