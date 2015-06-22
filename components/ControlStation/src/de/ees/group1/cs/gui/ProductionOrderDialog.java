@@ -2,9 +2,13 @@ package de.ees.group1.cs.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -39,22 +43,40 @@ public class ProductionOrderDialog extends JDialog {
 		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 		{
 			JPanel idPanel = new JPanel();
-			idPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+			idPanel.setLayout(new BoxLayout(idPanel, BoxLayout.X_AXIS));
 			idPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-			
-			JLabel lblId = new JLabel("ID:");
-			idPanel.add(lblId);
-			
-			txtId = new JTextField(2);
-			txtId.setEditable(false);
-			txtId.setText(String.valueOf(id));
-			idPanel.add(txtId);
-			
+			{
+				JLabel lblId = new JLabel("ID:");
+				//lblId.setAlignmentX(Component.LEFT_ALIGNMENT);
+				idPanel.add(lblId);
+				
+				idPanel.add(Box.createHorizontalStrut(5));
+				
+				txtId = new JTextField(2);
+				txtId.setColumns(3);
+				txtId.setMaximumSize(txtId.getPreferredSize());
+				txtId.setHorizontalAlignment(JTextField.CENTER);
+				txtId.setEditable(false);
+				txtId.setText(String.valueOf(id));
+				idPanel.add(txtId);
+			}
 			contentPanel.add(idPanel);
 			
-			JLabel lblSteps = new JLabel("Bearbeitungsschritte:");
-			lblSteps.setAlignmentX(Component.LEFT_ALIGNMENT);
-			contentPanel.add(lblSteps);
+			contentPanel.add(Box.createVerticalStrut(5));
+			
+			JPanel stepsLblPanel = new JPanel();
+			stepsLblPanel.setLayout(new BoxLayout(stepsLblPanel, BoxLayout.X_AXIS));
+			stepsLblPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+			{
+				stepsLblPanel.add(new JLabel("Bearbeitungsschritte:"));
+				
+				stepsLblPanel.add(Box.createHorizontalGlue());
+				
+				stepsLblPanel.add(new JButton(new ImageIcon(getClass().getResource("/toolbarButtonGraphics/general/Add16.gif"))));
+			}
+			contentPanel.add(stepsLblPanel);
+			
+			contentPanel.add(Box.createVerticalStrut(5));
 			
 			JPanel stepListPanel = new JPanel();
 			
