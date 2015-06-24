@@ -2,23 +2,21 @@ package de.ees.group1.cs.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import de.ees.group1.model.ProductionStep;
 import net.miginfocom.swing.MigLayout;
-
-import javax.swing.JLabel;
 
 public class ProductionOrderDialog extends JDialog {
 
@@ -29,14 +27,15 @@ public class ProductionOrderDialog extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	
 	public JTextField txtId;
+	JPanel stepListPanel;
 
 	/**
 	 * Create the dialog.
 	 */
 	public ProductionOrderDialog(int id) {
 		setTitle("Auftrag erstellen/bearbeiten");
-		setBounds(100, 100, 450, 300);
-		setResizable(false);
+		setBounds(100, 100, 600, 500);
+		//setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -78,7 +77,10 @@ public class ProductionOrderDialog extends JDialog {
 			
 			contentPanel.add(Box.createVerticalStrut(5));
 			
-			JPanel stepListPanel = new JPanel();
+			stepListPanel = new JPanel();
+			stepListPanel.setLayout(new MigLayout("wrap 1", "grow", ""));
+			stepListPanel.add(new ProductionStepPanel(1, new ProductionStep()), "grow");
+			stepListPanel.add(new ProductionStepPanel(2, new ProductionStep()), "grow");
 			
 			JScrollPane stepListScrollPane = new JScrollPane(stepListPanel);
 			stepListScrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);

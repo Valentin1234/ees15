@@ -41,14 +41,21 @@ public class ListedOrderPanel extends JPanel {
 		
 		JButton editBtn = new JButton(new ImageIcon(getClass().getResource("/toolbarButtonGraphics/general/Edit16.gif")));
 		add(editBtn);
-		JButton removeBtn = new JButton(new ImageIcon(getClass().getResource("/toolbarButtonGraphics/general/Delete16.gif")));
-		add(removeBtn, "wrap");
+		
+		JButton upBtn = new JButton(new ImageIcon(getClass().getResource("/toolbarButtonGraphics/navigation/Up16.gif")));
+		add(upBtn, "wrap");
 		
 		add(new JLabel("#Schritte:"));
 		
 		JTextField numStepsTxt = new JTextField(String.valueOf(order.size()), 3);
 		numStepsTxt.setEditable(false);
 		add(numStepsTxt);
+		
+		JButton removeBtn = new JButton(new ImageIcon(getClass().getResource("/toolbarButtonGraphics/general/Delete16.gif")));
+		add(removeBtn);
+		
+		JButton downBtn = new JButton(new ImageIcon(getClass().getResource("/toolbarButtonGraphics/navigation/Down16.gif")));
+		add(downBtn);
 	}
 	
 	public int getID() {
