@@ -3,6 +3,10 @@ package de.ees.group1.cs.gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -18,7 +22,7 @@ import javax.swing.border.EmptyBorder;
 import de.ees.group1.model.ProductionStep;
 import net.miginfocom.swing.MigLayout;
 
-public class ProductionOrderDialog extends JDialog {
+public class ProductionOrderDialog extends JDialog implements ActionListener {
 
 	/**
 	 * 
@@ -29,6 +33,8 @@ public class ProductionOrderDialog extends JDialog {
 	public JTextField txtId;
 	JPanel stepListPanel;
 
+	private List<ProductionStepPanel> stepPanels = new LinkedList<ProductionStepPanel>();
+	
 	/**
 	 * Create the dialog.
 	 */
@@ -71,7 +77,10 @@ public class ProductionOrderDialog extends JDialog {
 				
 				stepsLblPanel.add(Box.createHorizontalGlue());
 				
-				stepsLblPanel.add(new JButton(new ImageIcon(getClass().getResource("/toolbarButtonGraphics/general/Add16.gif"))));
+				JButton addStepButton = new JButton(new ImageIcon(getClass().getResource("/toolbarButtonGraphics/general/Add16.gif")));
+				addStepButton.setActionCommand("newStep");
+				addStepButton.addActionListener(this);
+				stepsLblPanel.add(addStepButton);
 			}
 			contentPanel.add(stepsLblPanel);
 			
@@ -79,8 +88,8 @@ public class ProductionOrderDialog extends JDialog {
 			
 			stepListPanel = new JPanel();
 			stepListPanel.setLayout(new MigLayout("wrap 1", "grow", ""));
-			stepListPanel.add(new ProductionStepPanel(1, new ProductionStep()), "grow");
-			stepListPanel.add(new ProductionStepPanel(2, new ProductionStep()), "grow");
+			//stepListPanel.add(new ProductionStepPanel(1, new ProductionStep()), "grow");
+			//stepListPanel.add(new ProductionStepPanel(2, new ProductionStep()), "grow");
 			
 			JScrollPane stepListScrollPane = new JScrollPane(stepListPanel);
 			stepListScrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -95,6 +104,7 @@ public class ProductionOrderDialog extends JDialog {
 			{
 				JButton okButton = new JButton("OK");
 				okButton.setActionCommand("OK");
+				okButton.addActionListener(this);
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
@@ -103,6 +113,70 @@ public class ProductionOrderDialog extends JDialog {
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
+		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		if(e.getActionCommand() == "OK") {
+			for(ProductionStepPanel p : stepPanels) {
+				p.validateForm();
+			}
+		}
+		
+		if(e.getActionCommand() == "newStep") {
+			addStep(new ProductionStep());
+		}		
+	}
+	
+	private void addStep(ProductionStep step) {
+		
+		int stepID = stepPanels.size()+1;
+		
+		ProductionStepPanel panel = new ProductionStepPanel(stepID, step);
+		panel.setListener(new ActionListener() {
+			ProductionStepPanel target;
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(e.getActionCommand() == "DEL") {
+					stepListPanel.remove(target);
+					stepPanels.remove(target);
+					updateStepIndices();
+					stepListPanel.revalidate();
+				} else if(e.getActionCommand() == "UP") {
+					int id = target.getNumber();
+					if(id != 1) {
+						stepListPanel.removeAll();
+						ProductionStepPanel tmp = stepPanels.get(id - 2);
+						coms[id - 2] = stepPanels.get(id - 1);
+						coms[id - 1] = tmp;
+						for(Component c : coms) {
+							stepListPanel.add(c, "grow");
+						}
+						updateStepIndices();
+						stepListPanel.revalidate();
+					}
+				}
+			}
+			
+			private ActionListener setTarget(ProductionStepPanel t) {
+				target = t;
+				return this;
+			}
+		}.setTarget(panel));
+		
+		
+		stepListPanel.add(panel, "grow");
+		stepPanels.add(panel);
+		stepListPanel.revalidate();
+	}
+	
+	private void updateStepIndices() {
+		int i = 1;
+		for(ProductionStepPanel p : stepPanels) {
+			p.setNumber(i++);
 		}
 	}
 
