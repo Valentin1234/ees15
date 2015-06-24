@@ -51,7 +51,7 @@ public class BT_manager implements IComProvider{
 		
 	}
 	
-	public boolean sendData(String data){
+	public boolean sendData(byte[] data){
 		
 		return this.localDev.sendMessage(data);
 		
@@ -86,27 +86,9 @@ public class BT_manager implements IComProvider{
 	
 	public void transmitProductionOrder(ProductionOrder order){
 
-		String part;
-		String order_telegramm = "NXTLT";
-		int size = 0;
+		Telegramm tele = new Telegramm(16,0,1,order);
 		
-		size = order.size();
-		part = "" + order.getId();
-		order_telegramm = order_telegramm + part;
-		
-		for(int i = 0; i <= size; i++){
-			
-			part = "" + i;
-			part = part + order.get(i).getType();
-			part = part + order.get(i).getWorkTimeSeconds();
-			part = part + order.get(i).getMinQualityLevel();
-			order_telegramm = order_telegramm + part;
-			
-		}
-		
-		order_telegramm = order_telegramm + size;
-		
-		if(this.sendData(order_telegramm)){
+		if(this.sendData(this.localDev.toByte(tele))){
 			
 			System.out.println("Datenübertragung erfolgreich");
 			

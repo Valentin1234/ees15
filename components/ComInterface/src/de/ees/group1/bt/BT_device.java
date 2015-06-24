@@ -35,8 +35,7 @@ public class BT_device /*implements DiscoveryListener*/ {
 		try {
 			this.nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
 		} catch (NXTCommException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		
 	}
@@ -51,8 +50,7 @@ public class BT_device /*implements DiscoveryListener*/ {
 			return true;
 			
 		} catch (NXTCommException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 			return false;
 			
 		}
@@ -68,7 +66,6 @@ public class BT_device /*implements DiscoveryListener*/ {
 	public void setSearchMAC(String mac){
 		
 		this.mac = mac; 
-				//String.format("%040x", new BigInteger(1, mac.getBytes()));
 		
 	}
 	
@@ -81,20 +78,19 @@ public class BT_device /*implements DiscoveryListener*/ {
 		
 	}
 	
-	public boolean sendMessage(String message){
-		
-		byte data[] = message.getBytes();
+	public boolean sendMessage(byte[] message){
 	
 		try {
 			
-			this.dos.write(data);
+			//TODO
+			//TODO Längenbytes hnzufügen
+			//TODO
+			this.dos.write(message);
 			return true;
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 			return false;
-			
 		}
 		
 	}
@@ -118,6 +114,36 @@ public class BT_device /*implements DiscoveryListener*/ {
 		}
 		
 		return sb.toString();
+		
+	}
+	
+	public byte[] toByte(Telegramm tele){
+		
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutput out = null;
+		
+		try {
+			out = new ObjectOutputStream(bos);
+			out.writeObject(tele);
+			return bos.toByteArray();
+		}catch(IOException e){
+			e.printStackTrace();
+		}finally {
+			try{
+				if( out != null ){
+					out.close();
+				}
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+			}
+			try{
+				bos.close();
+			}catch(IOException e) {
+				System.out.println(e.getMessage());	
+			}
+		
+		}
+		return null;
 		
 	}
 	
