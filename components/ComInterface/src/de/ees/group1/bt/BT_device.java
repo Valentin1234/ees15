@@ -1,5 +1,7 @@
 package de.ees.group1.bt;
 
+import de.ees.group1.model.*;
+
 import java.io.*;
 import java.math.*;
 
@@ -81,21 +83,29 @@ public class BT_device /*implements DiscoveryListener*/ {
 		
 	}
 	
-	public boolean sendMessage(byte[] message){
+	public boolean sendMessage(Telegramm<? extends Serializable> message){
 	
+		ObjectOutput out = null;
+		
 		try {
-			
-			//TODO
-			//TODO Längenbytes hnzufügen
-			//TODO
-			this.dos.write(message);
+			out = new ObjectOutputStream(this.dos);
+			out.writeObject(message);
 			this.dos.flush();
 			return true;
+		}catch(IOException e){
+			e.printStackTrace();
+		}finally {
+			try{
+				if( out != null ){
+					out.close();
+				}
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+			}
 			
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-			return false;
 		}
+		
+		return false;
 		
 	}
 	
@@ -121,34 +131,34 @@ public class BT_device /*implements DiscoveryListener*/ {
 		
 	}
 	
-	public byte[] toByte(Telegramm tele){
-		
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		ObjectOutput out = null;
-		
-		try {
-			out = new ObjectOutputStream(bos);
-			out.writeObject(tele);
-			return bos.toByteArray();
-		}catch(IOException e){
-			e.printStackTrace();
-		}finally {
-			try{
-				if( out != null ){
-					out.close();
-				}
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-			}
-			try{
-				bos.close();
-			}catch(IOException e) {
-				System.out.println(e.getMessage());	
-			}
-		
-		}
-		return null;
-		
-	}
+//	public byte[] toByte(Telegramm tele){
+//		
+//		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//		ObjectOutput out = null;
+//		
+//		try {
+//			out = new ObjectOutputStream(bos);
+//			out.writeObject(tele);
+//			return bos.toByteArray();
+//		}catch(IOException e){
+//			e.printStackTrace();
+//		}finally {
+//			try{
+//				if( out != null ){
+//					out.close();
+//				}
+//			} catch (IOException e) {
+//				System.out.println(e.getMessage());
+//			}
+//			try{
+//				bos.close();
+//			}catch(IOException e) {
+//				System.out.println(e.getMessage());	
+//			}
+//		
+//		}
+//		return null;
+//		
+//	}
 	
 }

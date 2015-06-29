@@ -3,6 +3,8 @@ package de.ees.group1.nxt;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -10,6 +12,8 @@ import java.io.OutputStream;
 import lejos.nxt.LCD;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
+import de.ees.group1.model.ProductionOrder;
+import de.ees.group1.model.Telegramm;
 
 public class BT_device {
 
@@ -59,22 +63,60 @@ public class BT_device {
 		
 	}
 	
-	public boolean sendMessage(byte[] data){
+	public boolean sendMessage(Telegramm message){
+		
+		ObjectOutput out = null;
 		
 		try {
-			this.dos.write(data);
+			out = new ObjectOutputStream(this.dos);
+			out.writeObject(message);
 			this.dos.flush();
 			return true;
-		} catch (IOException e) {
-			System.out.println(e);
-			return false;
+		}catch(IOException e){
+			e.printStackTrace();
+		}finally {
+			try{
+				if( out != null ){
+					out.close();
+				}
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+			}
+			
 		}
+		
+		return false;
+		
+	}
+	
+	public Telegramm receiveMessage(){
+		
+		Object obj;
+		ObjectInput in = null;
+		
+		try{
+			
+			in = new ObjectInputStream(this.dis);
+			obj = in.readObject();
+			Telegramm t = (Telegramm)obj;
+			if(t.getData() instanceof ProductionOrder) {
+				return (ProductionOrder) t.getData();
+			}
+			
+		}catch(IOException e){
+			
+			
+		}
+		
+//		if(obj instanceof Telegramm<ProductionStep> )
+//			listener.productionStepInd();
+		return null;
 		
 	}
 		
-	public byte[] createMessage(int destination, int source, int type, Object data){
+	public byte[] createMessage(int destination, int source, ProductionOrder data){
 		
-		Telegramm message = new Telegramm(destination, source, type, data);
+		Telegramm<ProductionOrder> message = new Telegramm<ProductionOrder>(destination, source, data);
 		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutput out = null;

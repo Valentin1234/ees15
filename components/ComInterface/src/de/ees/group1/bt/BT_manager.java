@@ -1,7 +1,6 @@
 package de.ees.group1.bt;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import javax.bluetooth.RemoteDevice;
 
@@ -9,6 +8,7 @@ import de.ees.group1.com.IComProvider;
 import de.ees.group1.com.IControlStation;
 import de.ees.group1.com.IWorkStation;
 import de.ees.group1.model.ProductionOrder;
+import de.ees.group1.model.Telegramm;
 
 public class BT_manager implements IComProvider{
 	
@@ -52,12 +52,6 @@ public class BT_manager implements IComProvider{
 		
 	}
 	
-	public boolean sendData(byte[] data){
-		
-		return this.localDev.sendMessage(data);
-		
-	}
-	
 	public void disconnect(){
 		
 		try{
@@ -87,9 +81,9 @@ public class BT_manager implements IComProvider{
 	
 	public void transmitProductionOrder(ProductionOrder order){
 
-		Telegramm tele = new Telegramm(16,0,1,order);
+		Telegramm<ProductionOrder> tele = new Telegramm<ProductionOrder>(16,0,order);
 		
-		if(this.sendData(this.localDev.toByte(tele))){
+		if(this.localDev.sendMessage(tele)){
 			
 			System.out.println("Datenübertragung erfolgreich");
 			
