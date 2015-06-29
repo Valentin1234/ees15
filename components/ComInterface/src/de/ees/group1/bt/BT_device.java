@@ -1,8 +1,11 @@
 package de.ees.group1.bt;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.math.*;
+
+import javax.bluetooth.*;
+import javax.microedition.io.*;
+import javax.obex.*;
 
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
@@ -35,8 +38,7 @@ public class BT_device /*implements DiscoveryListener*/ {
 		try {
 			this.nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
 		} catch (NXTCommException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		
 	}
@@ -51,8 +53,7 @@ public class BT_device /*implements DiscoveryListener*/ {
 			return true;
 			
 		} catch (NXTCommException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 			return false;
 			
 		}
@@ -68,7 +69,6 @@ public class BT_device /*implements DiscoveryListener*/ {
 	public void setSearchMAC(String mac){
 		
 		this.mac = mac; 
-				//String.format("%040x", new BigInteger(1, mac.getBytes()));
 		
 	}
 	
@@ -81,20 +81,20 @@ public class BT_device /*implements DiscoveryListener*/ {
 		
 	}
 	
-	public boolean sendMessage(String message){
-		
-		byte data[] = message.getBytes();
+	public boolean sendMessage(byte[] message){
 	
 		try {
 			
-			this.dos.write(data);
+			//TODO
+			//TODO Längenbytes hnzufügen
+			//TODO
+			this.dos.write(message);
+			this.dos.flush();
 			return true;
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 			return false;
-			
 		}
 		
 	}
@@ -118,6 +118,36 @@ public class BT_device /*implements DiscoveryListener*/ {
 		}
 		
 		return sb.toString();
+		
+	}
+	
+	public byte[] toByte(Telegramm tele){
+		
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutput out = null;
+		
+		try {
+			out = new ObjectOutputStream(bos);
+			out.writeObject(tele);
+			return bos.toByteArray();
+		}catch(IOException e){
+			e.printStackTrace();
+		}finally {
+			try{
+				if( out != null ){
+					out.close();
+				}
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+			}
+			try{
+				bos.close();
+			}catch(IOException e) {
+				System.out.println(e.getMessage());	
+			}
+		
+		}
+		return null;
 		
 	}
 	
