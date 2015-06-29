@@ -1,8 +1,11 @@
 package de.ees.group1.bt;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.math.*;
+
+import javax.bluetooth.*;
+import javax.microedition.io.*;
+import javax.obex.*;
 
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
@@ -86,6 +89,7 @@ public class BT_device /*implements DiscoveryListener*/ {
 			//TODO Längenbytes hnzufügen
 			//TODO
 			this.dos.write(message);
+			this.dos.flush();
 			return true;
 			
 		} catch (IOException e) {
