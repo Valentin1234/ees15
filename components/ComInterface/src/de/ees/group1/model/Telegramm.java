@@ -32,4 +32,10 @@ public class Telegramm implements Serializable {
 		
 	}
 	
+	public Serializable getData(){
+		
+		return this.data;
+		
+	}
+	
 }
