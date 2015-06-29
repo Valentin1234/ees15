@@ -13,12 +13,15 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import de.ees.group1.model.ProductionOrder;
 import de.ees.group1.model.ProductionStep;
 import net.miginfocom.swing.MigLayout;
 
@@ -35,10 +38,17 @@ public class ProductionOrderDialog extends JDialog implements ActionListener {
 
 	private List<ProductionStepPanel> stepPanels = new LinkedList<ProductionStepPanel>();
 	
+	private ProductionOrder order;
+	private boolean valid;
+	
 	/**
 	 * Create the dialog.
 	 */
-	public ProductionOrderDialog(int id) {
+	public ProductionOrderDialog(ProductionOrder order, JFrame owner) {
+		super(owner);
+		
+		this.order = order;
+		
 		setTitle("Auftrag erstellen/bearbeiten");
 		setBounds(100, 100, 600, 500);
 		//setResizable(false);
@@ -52,7 +62,6 @@ public class ProductionOrderDialog extends JDialog implements ActionListener {
 			idPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 			{
 				JLabel lblId = new JLabel("ID:");
-				//lblId.setAlignmentX(Component.LEFT_ALIGNMENT);
 				idPanel.add(lblId);
 				
 				idPanel.add(Box.createHorizontalStrut(5));
@@ -62,7 +71,7 @@ public class ProductionOrderDialog extends JDialog implements ActionListener {
 				txtId.setMaximumSize(txtId.getPreferredSize());
 				txtId.setHorizontalAlignment(JTextField.CENTER);
 				txtId.setEditable(false);
-				txtId.setText(String.valueOf(id));
+				txtId.setText(String.valueOf(order.getId()));
 				idPanel.add(txtId);
 			}
 			contentPanel.add(idPanel);
@@ -114,18 +123,37 @@ public class ProductionOrderDialog extends JDialog implements ActionListener {
 				buttonPane.add(cancelButton);
 			}
 		}
+		
+		for(ProductionStep step : order) {
+			addStep(step);
+		}
+	}
+	
+	public boolean isOrderValid() {
+		return valid;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
 		if(e.getActionCommand() == "OK") {
+			valid = true;
 			for(ProductionStepPanel p : stepPanels) {
-				p.validateForm();
+				valid &= p.validateForm();
 			}
-		}
-		
-		if(e.getActionCommand() == "newStep") {
+			
+			if(!valid) {
+				JOptionPane.showMessageDialog(this, "Es fehlen noch Daten!");
+			} else {
+				for(ProductionStepPanel p : stepPanels) {
+					order.add(p.getProductionStep());
+				}
+				this.dispose();
+			}
+		} else if(e.getActionCommand() == "Cancel") {
+			valid = false;
+			this.dispose();
+		} else if(e.getActionCommand() == "newStep") {
 			addStep(new ProductionStep());
 		}		
 	}
@@ -145,27 +173,41 @@ public class ProductionOrderDialog extends JDialog implements ActionListener {
 					stepPanels.remove(target);
 					updateStepIndices();
 					stepListPanel.revalidate();
+					stepListPanel.repaint();
 				} else if(e.getActionCommand() == "UP") {
 					int id = target.getNumber();
-					if(id != 1) {
+					if(id > 1) {
 						stepListPanel.removeAll();
-						ProductionStepPanel tmp = stepPanels.get(id - 2);
-						coms[id - 2] = stepPanels.get(id - 1);
-						coms[id - 1] = tmp;
-						for(Component c : coms) {
+						stepPanels.remove(target);
+						stepPanels.add(id - 2, target);
+						for(Component c : stepPanels) {
 							stepListPanel.add(c, "grow");
 						}
 						updateStepIndices();
 						stepListPanel.revalidate();
+						stepListPanel.repaint();
 					}
-				}
+				} else if(e.getActionCommand() == "DOWN") {
+						int id = target.getNumber();
+						if(id < stepPanels.size()-1) {
+							stepListPanel.removeAll();
+							stepPanels.remove(target);
+							stepPanels.add(id, target);
+							for(Component c : stepPanels) {
+								stepListPanel.add(c, "grow");
+							}
+							updateStepIndices();
+							stepListPanel.revalidate();
+							stepListPanel.repaint();
+						}
+					}
 			}
 			
-			private ActionListener setTarget(ProductionStepPanel t) {
+			private ActionListener init(ProductionStepPanel t) {
 				target = t;
 				return this;
 			}
-		}.setTarget(panel));
+		}.init(panel));
 		
 		
 		stepListPanel.add(panel, "grow");

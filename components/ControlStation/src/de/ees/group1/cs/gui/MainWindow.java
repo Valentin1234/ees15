@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
@@ -59,10 +61,10 @@ public class MainWindow {
 			public int getNextOrderId() { return -1;}
 		};
 		
-		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(20)), "grow");
-		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(21)), "grow");
-		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(22)), "grow");
-		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(23)), "grow");
+//		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(20)), "grow");
+//		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(21)), "grow");
+//		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(22)), "grow");
+//		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(23)), "grow");
 	}
 
 	/**
@@ -127,6 +129,8 @@ public class MainWindow {
 	
 	public void addOrder(ProductionOrder order) {
 		orderListPanel.add(new ListedOrderPanel(order), "grow");
+		orderListPanel.revalidate();
+		orderListPanel.repaint();
 	}
 	
 	public void removeOrder(int id) {
@@ -143,8 +147,14 @@ public class MainWindow {
 	}
 	
 	private void showAddOrderDialog() {
-		JDialog prodOrderDialog = new ProductionOrderDialog(listener.getNextOrderId());
+		ProductionOrder proto = new ProductionOrder(listener.getNextOrderId());
+		ProductionOrderDialog prodOrderDialog = new ProductionOrderDialog(proto, frmControlstation);
 		prodOrderDialog.setModal(true);
 		prodOrderDialog.setVisible(true);
+		
+		if(prodOrderDialog.isOrderValid()) {
+			addOrder(proto);
+		}
+		
 	}
 }

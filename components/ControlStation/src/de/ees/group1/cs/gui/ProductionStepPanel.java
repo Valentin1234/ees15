@@ -36,9 +36,9 @@ public class ProductionStepPanel extends JPanel {
 	private JComboBox<WorkStationType> typeCB;
 	private JComboBox<Integer> qualityCB;
 	private Border badValueBorder = BorderFactory
-			.createLineBorder(Color.RED, 1);
+			.createLineBorder(Color.RED, 2);
 	private Border goodValueBorder = BorderFactory
-			.createEmptyBorder(1, 1, 1, 1);
+			.createEmptyBorder(2, 2, 2, 2);
 
 	private Integer[] qualityValues = new Integer[] { -1, 1, 2, 3, 4 };
 
@@ -149,6 +149,9 @@ public class ProductionStepPanel extends JPanel {
 	}
 
 	public ProductionStep getProductionStep() {
+		step.setType((WorkStationType)typeCB.getSelectedItem());
+		step.setMinQualityLevel((Integer)qualityCB.getSelectedItem());
+		step.setWorkTimeSeconds(Integer.parseInt(durationTxtField.getText()));
 		return step;
 	}
 
