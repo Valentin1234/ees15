@@ -17,6 +17,12 @@ public interface IComProvider {
 	
 	void transmitProductionOrder(ProductionOrder order);
 	
+	void transmitYes();
+	
+	void transmitNo();
+	
+	void transmitFinishedStep();
+	
 	/*
 	 * TODO: more still to be specified
 	 */
