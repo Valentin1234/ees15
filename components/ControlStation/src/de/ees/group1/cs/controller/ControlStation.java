@@ -30,4 +30,22 @@ public class ControlStation implements IGUIListener, IControlStation {
 		return 0;
 	}
 
+	@Override
+	public void moveOrderUp(int orderID) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moveOrderDown(int orderID) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void orderUpdatedAction(ProductionOrder tmp) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

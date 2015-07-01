@@ -25,6 +25,13 @@ public class ProductionOrder extends LinkedList<ProductionStep> {
 		_id = id;
 	}
 
+	public ProductionOrder(ProductionOrder order) {
+		_id = order.getId();
+		for(ProductionStep step : order) {
+			this.add(new ProductionStep(step));
+		}
+	}
+
 	public int getId() {
 		return _id;
 	}
