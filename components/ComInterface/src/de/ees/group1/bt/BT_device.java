@@ -1,18 +1,17 @@
 package de.ees.group1.bt;
 
-import de.ees.group1.model.*;
-
-import java.io.*;
-import java.math.*;
-
-import javax.bluetooth.*;
-import javax.microedition.io.*;
-import javax.obex.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
+
+import de.ees.group1.model.Telegramm;
 
 /**
  * 
@@ -83,7 +82,7 @@ public class BT_device /*implements DiscoveryListener*/ {
 		
 	}
 	
-	public boolean sendMessage(Telegramm<? extends Serializable> message){
+	public boolean sendMessage(Telegramm message){
 	
 		ObjectOutput out = null;
 		
