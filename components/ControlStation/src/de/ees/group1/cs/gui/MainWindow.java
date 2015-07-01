@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -64,10 +65,8 @@ public class MainWindow {
 			public void orderUpdatedAction(ProductionOrder tmp) {}
 		};
 		
-		addOrder(new ProductionOrder(20));
-//		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(21)), "grow");
-//		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(22)), "grow");
-//		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(23)), "grow");
+		//TODO: just for testing
+		addOrderPanel(new ProductionOrder(20));
 	}
 
 	/**
@@ -130,7 +129,31 @@ public class MainWindow {
 		this.listener = listener;
 	}
 	
-	public void addOrder(ProductionOrder order) {
+	public void updateOrderList(List<ProductionOrder> list) {
+		Component[] orderPanels = orderListPanel.getComponents();
+		int i = 0;
+		for(ProductionOrder order : list) {
+			if(orderPanels.length < i+1) {
+				addOrderPanel(order);
+			} else {
+				ListedOrderPanel orderPanel = (ListedOrderPanel)orderPanels[i];
+				orderPanel.setOrder(order);
+				orderPanel.update();				
+			}
+			i++;
+		}
+		//remove excessive panels
+		for(;i < orderPanels.length; i++) {
+			orderListPanel.remove(orderPanels[i]);
+		}
+		
+	}
+	
+	public void updateActiveOrder(ProductionOrder order) {
+		
+	}
+	
+	private void addOrderPanel(ProductionOrder order) {
 		ListedOrderPanel panel = new ListedOrderPanel(order);
 		panel.addActionListener(new ActionListener() {
 			private ListedOrderPanel target;
@@ -138,8 +161,15 @@ public class MainWindow {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(e.getActionCommand() == "Edit") {
+					//TODO gui update just for testing (should be triggered from listener)
 					target.setOrder(showEditOrderDialog(target.getOrder()));
 					target.update();
+				} else if (e.getActionCommand() == "Up") {
+					listener.moveOrderUp(target.getOrder().getId());
+				} else if (e.getActionCommand() == "Down") {
+					listener.moveOrderDown(target.getOrder().getId());
+				} else if (e.getActionCommand() == "Del") {
+					listener.orderRemovedAction(target.getOrder().getId());
 				}
 			}
 			
@@ -153,19 +183,6 @@ public class MainWindow {
 		orderListPanel.repaint();
 	}
 	
-	public void removeOrder(int id) {
-		for(Component c : orderListPanel.getComponents()) {
-			if(((ListedOrderPanel)c).getID() == id) {
-				orderListPanel.remove(c);
-				break;
-			}
-		}
-	}
-	
-	public void updateActiveOrder(ProductionOrder order) {
-		
-	}
-	
 	private void showAddOrderDialog() {
 		ProductionOrder proto = new ProductionOrder(listener.getNextOrderId());
 		ProductionOrderDialog prodOrderDialog = new ProductionOrderDialog(proto, frmControlstation);
@@ -174,8 +191,8 @@ public class MainWindow {
 		
 		if(prodOrderDialog.isOrderValid()) {
 			listener.orderCreatedAction(proto);
-			//just for testing
-			addOrder(proto);
+			//TODO just for testing (should be done by the listener)
+			addOrderPanel(proto);
 		}
 	}
 	

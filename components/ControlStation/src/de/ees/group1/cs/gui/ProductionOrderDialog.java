@@ -195,7 +195,7 @@ public class ProductionOrderDialog extends JDialog implements ActionListener {
 					}
 				} else if(e.getActionCommand() == "DOWN") {
 						int id = target.getNumber();
-						if(id < order.size()-1) {
+						if(id < order.size()) {
 							stepListPanel.remove(target);
 							stepListPanel.add(target, "grow", id);
 							
