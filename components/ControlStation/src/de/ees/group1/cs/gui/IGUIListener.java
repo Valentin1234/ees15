@@ -16,4 +16,6 @@ public interface IGUIListener {
 
 	public void orderUpdatedAction(ProductionOrder tmp);
 
+	public void activeOrderCanceledAction();
+
 }
