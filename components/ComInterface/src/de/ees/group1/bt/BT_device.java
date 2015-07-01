@@ -1,16 +1,17 @@
 package de.ees.group1.bt;
 
-import java.io.*;
-import java.math.*;
-
-import javax.bluetooth.*;
-import javax.microedition.io.*;
-import javax.obex.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
+
+import de.ees.group1.model.Telegramm;
 
 /**
  * 
@@ -81,21 +82,29 @@ public class BT_device /*implements DiscoveryListener*/ {
 		
 	}
 	
-	public boolean sendMessage(byte[] message){
+	public boolean sendMessage(Telegramm message){
 	
+		ObjectOutput out = null;
+		
 		try {
-			
-			//TODO
-			//TODO Längenbytes hnzufügen
-			//TODO
-			this.dos.write(message);
+			out = new ObjectOutputStream(this.dos);
+			out.writeObject(message);
 			this.dos.flush();
 			return true;
+		}catch(IOException e){
+			e.printStackTrace();
+		}finally {
+			try{
+				if( out != null ){
+					out.close();
+				}
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+			}
 			
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-			return false;
 		}
+		
+		return false;
 		
 	}
 	
@@ -121,34 +130,34 @@ public class BT_device /*implements DiscoveryListener*/ {
 		
 	}
 	
-	public byte[] toByte(Telegramm tele){
-		
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		ObjectOutput out = null;
-		
-		try {
-			out = new ObjectOutputStream(bos);
-			out.writeObject(tele);
-			return bos.toByteArray();
-		}catch(IOException e){
-			e.printStackTrace();
-		}finally {
-			try{
-				if( out != null ){
-					out.close();
-				}
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-			}
-			try{
-				bos.close();
-			}catch(IOException e) {
-				System.out.println(e.getMessage());	
-			}
-		
-		}
-		return null;
-		
-	}
+//	public byte[] toByte(Telegramm tele){
+//		
+//		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//		ObjectOutput out = null;
+//		
+//		try {
+//			out = new ObjectOutputStream(bos);
+//			out.writeObject(tele);
+//			return bos.toByteArray();
+//		}catch(IOException e){
+//			e.printStackTrace();
+//		}finally {
+//			try{
+//				if( out != null ){
+//					out.close();
+//				}
+//			} catch (IOException e) {
+//				System.out.println(e.getMessage());
+//			}
+//			try{
+//				bos.close();
+//			}catch(IOException e) {
+//				System.out.println(e.getMessage());	
+//			}
+//		
+//		}
+//		return null;
+//		
+//	}
 	
 }
