@@ -107,7 +107,7 @@ public class MainWindow {
 		mnAuftrag.add(mntmAnlegen);
 		
 		JPanel panel = new JPanel();
-		panel.setLayout(new MigLayout("", "[50%][50%]", "[][][][][grow]"));
+		panel.setLayout(new MigLayout("", "[50%][50%]", "[][grow][][][]"));
 		panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		frmControlstation.getContentPane().add(panel);
 		
@@ -128,6 +128,11 @@ public class MainWindow {
 			}
 		});
 		panel.add(actOrderPanel, "cell 1 0,grow");
+		
+		for(int i = 1; i < 4; i++) {
+			JPanel workstation = new WorkStationPanel(i);
+			panel.add(workstation, "cell 1 "+(i+1)+",grow");
+		}
 	}
 	
 	public void registerGUIListener(IGUIListener listener) {

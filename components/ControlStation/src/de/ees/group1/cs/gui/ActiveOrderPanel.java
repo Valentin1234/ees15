@@ -35,7 +35,8 @@ public class ActiveOrderPanel extends JPanel {
 
 		setLayout(new MigLayout("", "[][][][grow]", "[][][]"));
 		
-		statusLbl = new JLabel("Wartet");
+		statusLbl = new JLabel();
+		statusLbl.setText("Wartet");
 		statusLbl.setPreferredSize(new Dimension(80, -1));
 		statusLbl.setHorizontalAlignment(SwingConstants.CENTER);
 		statusLbl.setBackground(Color.YELLOW);

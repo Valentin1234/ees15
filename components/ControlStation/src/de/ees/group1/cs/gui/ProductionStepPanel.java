@@ -74,7 +74,7 @@ public class ProductionStepPanel extends JPanel {
 		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.black));
 
 		Border outer = BorderFactory.createEmptyBorder(2, 0, 2, 0);
-		Border inner = BorderFactory.createMatteBorder(0, 1, 0, 0, Color.BLACK);
+		Border inner = BorderFactory.createMatteBorder(0, 1, 0, 0, Color.black);
 		Border border = BorderFactory.createCompoundBorder(outer, inner);
 
 		JPanel numberPanel = new JPanel(new BorderLayout());
