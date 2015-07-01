@@ -5,11 +5,8 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.BoxLayout;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -59,9 +56,15 @@ public class MainWindow {
 			public void orderCreatedAction(ProductionOrder order) {}
 			@Override
 			public int getNextOrderId() { return -1;}
+			@Override
+			public void moveOrderUp(int orderID) {}
+			@Override
+			public void moveOrderDown(int orderID) {}
+			@Override
+			public void orderUpdatedAction(ProductionOrder tmp) {}
 		};
 		
-//		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(20)), "grow");
+		addOrder(new ProductionOrder(20));
 //		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(21)), "grow");
 //		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(22)), "grow");
 //		orderListPanel.add(new ListedOrderPanel(new ProductionOrder(23)), "grow");
@@ -128,7 +131,24 @@ public class MainWindow {
 	}
 	
 	public void addOrder(ProductionOrder order) {
-		orderListPanel.add(new ListedOrderPanel(order), "grow");
+		ListedOrderPanel panel = new ListedOrderPanel(order);
+		panel.addActionListener(new ActionListener() {
+			private ListedOrderPanel target;
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(e.getActionCommand() == "Edit") {
+					target.setOrder(showEditOrderDialog(target.getOrder()));
+					target.update();
+				}
+			}
+			
+			public ActionListener init(ListedOrderPanel target) {
+				this.target = target;
+				return this;
+			}
+		}.init(panel));
+		orderListPanel.add(panel, "grow");
 		orderListPanel.revalidate();
 		orderListPanel.repaint();
 	}
@@ -153,8 +173,22 @@ public class MainWindow {
 		prodOrderDialog.setVisible(true);
 		
 		if(prodOrderDialog.isOrderValid()) {
+			listener.orderCreatedAction(proto);
+			//just for testing
 			addOrder(proto);
 		}
+	}
+	
+	private ProductionOrder showEditOrderDialog(ProductionOrder order) {
+		ProductionOrder tmp = new ProductionOrder(order);
+		ProductionOrderDialog prodOrderDialog = new ProductionOrderDialog(tmp, frmControlstation);
+		prodOrderDialog.setModal(true);
+		prodOrderDialog.setVisible(true);
 		
+		if (prodOrderDialog.isOrderValid()) {
+			listener.orderUpdatedAction(tmp);
+			return tmp;
+		}
+		return order;
 	}
 }

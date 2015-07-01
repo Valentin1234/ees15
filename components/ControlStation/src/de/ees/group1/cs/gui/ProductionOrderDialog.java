@@ -5,8 +5,6 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -21,9 +19,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import net.miginfocom.swing.MigLayout;
 import de.ees.group1.model.ProductionOrder;
 import de.ees.group1.model.ProductionStep;
-import net.miginfocom.swing.MigLayout;
 
 public class ProductionOrderDialog extends JDialog implements ActionListener {
 
@@ -35,8 +33,6 @@ public class ProductionOrderDialog extends JDialog implements ActionListener {
 	
 	public JTextField txtId;
 	JPanel stepListPanel;
-
-	private List<ProductionStepPanel> stepPanels = new LinkedList<ProductionStepPanel>();
 	
 	private ProductionOrder order;
 	private boolean valid;
@@ -120,12 +116,14 @@ public class ProductionOrderDialog extends JDialog implements ActionListener {
 			{
 				JButton cancelButton = new JButton("Cancel");
 				cancelButton.setActionCommand("Cancel");
+				cancelButton.addActionListener(this);
 				buttonPane.add(cancelButton);
 			}
 		}
 		
+		int i = 1;
 		for(ProductionStep step : order) {
-			addStep(step);
+			addStep(step, i++);
 		}
 	}
 	
@@ -137,30 +135,38 @@ public class ProductionOrderDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		
 		if(e.getActionCommand() == "OK") {
+			
+			if(order.size() == 0) {
+				JOptionPane.showMessageDialog(this, "Bitte fügen Sie mindestens einen"
+						+ " Bearbeitungsschritt zum Auftrag hinzu!");
+				return;
+			}
+			
 			valid = true;
-			for(ProductionStepPanel p : stepPanels) {
-				valid &= p.validateForm();
+			for(Component c : stepListPanel.getComponents()) {
+				ProductionStepPanel p = (ProductionStepPanel)c;
+				if(p.validateForm())
+					p.save();
+				else
+					valid = false;
 			}
 			
 			if(!valid) {
 				JOptionPane.showMessageDialog(this, "Es fehlen noch Daten!");
 			} else {
-				for(ProductionStepPanel p : stepPanels) {
-					order.add(p.getProductionStep());
-				}
 				this.dispose();
 			}
 		} else if(e.getActionCommand() == "Cancel") {
 			valid = false;
 			this.dispose();
 		} else if(e.getActionCommand() == "newStep") {
-			addStep(new ProductionStep());
+			ProductionStep step = new ProductionStep();
+			addStep(step, order.size()+1);
+			order.add(step);
 		}		
 	}
 	
-	private void addStep(ProductionStep step) {
-		
-		int stepID = stepPanels.size()+1;
+	private void addStep(ProductionStep step, int stepID) {
 		
 		ProductionStepPanel panel = new ProductionStepPanel(stepID, step);
 		panel.setListener(new ActionListener() {
@@ -170,32 +176,32 @@ public class ProductionOrderDialog extends JDialog implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				if(e.getActionCommand() == "DEL") {
 					stepListPanel.remove(target);
-					stepPanels.remove(target);
+					order.remove(target.getProductionStep());
 					updateStepIndices();
 					stepListPanel.revalidate();
 					stepListPanel.repaint();
 				} else if(e.getActionCommand() == "UP") {
 					int id = target.getNumber();
 					if(id > 1) {
-						stepListPanel.removeAll();
-						stepPanels.remove(target);
-						stepPanels.add(id - 2, target);
-						for(Component c : stepPanels) {
-							stepListPanel.add(c, "grow");
-						}
+						stepListPanel.remove(target);
+						stepListPanel.add(target, "grow", id -2);
+						
+						order.remove(target.getProductionStep());
+						order.add(id - 2, target.getProductionStep());
+						
 						updateStepIndices();
 						stepListPanel.revalidate();
 						stepListPanel.repaint();
 					}
 				} else if(e.getActionCommand() == "DOWN") {
 						int id = target.getNumber();
-						if(id < stepPanels.size()-1) {
-							stepListPanel.removeAll();
-							stepPanels.remove(target);
-							stepPanels.add(id, target);
-							for(Component c : stepPanels) {
-								stepListPanel.add(c, "grow");
-							}
+						if(id < order.size()-1) {
+							stepListPanel.remove(target);
+							stepListPanel.add(target, "grow", id);
+							
+							order.remove(target.getProductionStep());
+							order.add(id, target.getProductionStep());
+							
 							updateStepIndices();
 							stepListPanel.revalidate();
 							stepListPanel.repaint();
@@ -211,13 +217,13 @@ public class ProductionOrderDialog extends JDialog implements ActionListener {
 		
 		
 		stepListPanel.add(panel, "grow");
-		stepPanels.add(panel);
 		stepListPanel.revalidate();
 	}
 	
 	private void updateStepIndices() {
 		int i = 1;
-		for(ProductionStepPanel p : stepPanels) {
+		for(Component c : stepListPanel.getComponents()) {
+			ProductionStepPanel p = (ProductionStepPanel) c;
 			p.setNumber(i++);
 		}
 	}

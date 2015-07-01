@@ -148,11 +148,10 @@ public class ProductionStepPanel extends JPanel {
 		return number;
 	}
 
-	public ProductionStep getProductionStep() {
+	public void save() {
 		step.setType((WorkStationType)typeCB.getSelectedItem());
 		step.setMinQualityLevel((Integer)qualityCB.getSelectedItem());
 		step.setWorkTimeSeconds(Integer.parseInt(durationTxtField.getText()));
-		return step;
 	}
 
 	public boolean validateForm() {
@@ -192,5 +191,9 @@ public class ProductionStepPanel extends JPanel {
 		// set duration
 		int duration = step.getWorkTimeSeconds();
 		durationTxtField.setText(duration > 0 ? String.valueOf(duration) : "");
+	}
+
+	public ProductionStep getProductionStep() {
+		return step;
 	}
 }

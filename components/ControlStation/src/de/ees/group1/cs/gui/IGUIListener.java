@@ -8,6 +8,12 @@ public interface IGUIListener {
 	
 	public void orderRemovedAction(int orderID);
 	
+	public void moveOrderUp(int orderID);
+	
+	public void moveOrderDown(int orderID);
+	
 	public int getNextOrderId();
+
+	public void orderUpdatedAction(ProductionOrder tmp);
 
 }
