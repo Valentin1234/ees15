@@ -1,13 +1,19 @@
 package de.ees.group1.cs.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -24,7 +30,7 @@ import de.ees.group1.model.ProductionOrder;
 public class MainWindow {
 
 	private JFrame frmControlstation;
-	private JPanel orderListPanel;
+	private OrdersPanel ordersPanel;
 	private IGUIListener listener;
 
 	/**
@@ -82,8 +88,19 @@ public class MainWindow {
 		JMenuBar menuBar = new JMenuBar();
 		frmControlstation.setJMenuBar(menuBar);
 		
-		JMenu mnDatei = new JMenu("Datei");
-		menuBar.add(mnDatei);
+		JMenu mnCom = new JMenu("Verbindung");
+		menuBar.add(mnCom);
+		
+		JMenuItem mntmMAC = new JMenuItem("mit NXT verbinden");
+		mntmMAC.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		mnCom.add(mntmMAC);
 		
 		JMenu mnAuftrag = new JMenu("Auftrag");
 		menuBar.add(mnAuftrag);
@@ -99,17 +116,18 @@ public class MainWindow {
 		mnAuftrag.add(mntmAnlegen);
 		
 		JPanel panel = new JPanel();
-		panel.setLayout(new MigLayout("", "[50%][50%]", "[100%]"));
+		panel.setLayout(new MigLayout("", "[50%][50%]", "[][][][][grow]"));
 		panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		frmControlstation.getContentPane().add(panel);
 		
-		orderListPanel = new JPanel();
-		orderListPanel.setLayout(new MigLayout("wrap 1", "grow", ""));
-		
-		JScrollPane scrollPane = new JScrollPane(orderListPanel);
-		scrollPane.setMinimumSize(new Dimension(300,-1));
-		scrollPane.setBorder(new TitledBorder(null, "anstehende Auftr\u00E4ge", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.add(scrollPane, "cell 0 0,grow");
+		ordersPanel = new OrdersPanel(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showAddOrderDialog();
+			}
+		});
+		panel.add(ordersPanel, "cell 0 0,grow, span 1 5");
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setMinimumSize(new Dimension(300, -1));
@@ -130,21 +148,20 @@ public class MainWindow {
 	}
 	
 	public void updateOrderList(List<ProductionOrder> list) {
-		Component[] orderPanels = orderListPanel.getComponents();
+		ListedOrderPanel[] orderPanels = ordersPanel.getOrderPanels();
 		int i = 0;
 		for(ProductionOrder order : list) {
 			if(orderPanels.length < i+1) {
 				addOrderPanel(order);
 			} else {
-				ListedOrderPanel orderPanel = (ListedOrderPanel)orderPanels[i];
-				orderPanel.setOrder(order);
-				orderPanel.update();				
+				orderPanels[i].setOrder(order);
+				orderPanels[i].update();				
 			}
 			i++;
 		}
 		//remove excessive panels
 		for(;i < orderPanels.length; i++) {
-			orderListPanel.remove(orderPanels[i]);
+			ordersPanel.removeOrderPanel(orderPanels[i]);
 		}
 		
 	}
@@ -178,14 +195,13 @@ public class MainWindow {
 				return this;
 			}
 		}.init(panel));
-		orderListPanel.add(panel, "grow");
-		orderListPanel.revalidate();
-		orderListPanel.repaint();
+		ordersPanel.addOrderPanel(panel);
 	}
 	
 	private void showAddOrderDialog() {
 		ProductionOrder proto = new ProductionOrder(listener.getNextOrderId());
 		ProductionOrderDialog prodOrderDialog = new ProductionOrderDialog(proto, frmControlstation);
+		prodOrderDialog.setLocationRelativeTo(frmControlstation);
 		prodOrderDialog.setModal(true);
 		prodOrderDialog.setVisible(true);
 		
