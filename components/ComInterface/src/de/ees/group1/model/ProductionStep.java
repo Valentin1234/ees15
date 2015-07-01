@@ -31,7 +31,7 @@ public class ProductionStep implements Serializable {
 	private int _minQualityLevel;
 	
 	/**
-	 * The time this step will consume
+	 * The time this step will consume in seconds
 	 */
 	private int _workTimeSeconds;
 	
