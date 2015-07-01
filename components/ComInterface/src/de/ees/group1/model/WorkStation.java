@@ -6,5 +6,10 @@ public class WorkStation {
 		DRILL,
 		LATHE,
 	}
+	/*
+	 * Gibt den Status der Arbeitsstation zurück. -1...default, 0...bereit, 1...in Betrieb, 2...defekt 
+	 */
+	public int status;
+	
 
 }
