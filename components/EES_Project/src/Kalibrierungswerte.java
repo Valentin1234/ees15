@@ -1,4 +1,3 @@
-
 public class Kalibrierungswerte {
 
 	private int white;
