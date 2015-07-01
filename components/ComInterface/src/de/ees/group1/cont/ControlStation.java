@@ -14,14 +14,19 @@ public class ControlStation {
 	/*
 	 * übergibt den gerade an den NXT übermittleten Auftrag an die ControlStation
 	 */
-	public void getCurrentOrder(ProductionOrder order){
+	public void setCurrentOrder(ProductionOrder order){
 		currentOrder=order;
 		currentStepNumber=0;
 	}
-	
-	public void getCurrentStep(){
+	/*
+	 * Schreibt den nächsten Step auf currentStep und erhöht die currentStepNumber um 1
+	 */
+	public void setCurrentStep(){
 		currentStep =currentOrder.getStep(currentStepNumber);
+		currentStepNumber++;
 	}
+	
+	
 	
 
 }
