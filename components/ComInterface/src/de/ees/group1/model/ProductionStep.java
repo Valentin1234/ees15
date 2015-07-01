@@ -47,6 +47,12 @@ public class ProductionStep implements Serializable {
 		setWorkTimeSeconds(workTimeSeconds);
 	}
 
+	public ProductionStep(ProductionStep step) {
+		_type = step.getType();
+		_minQualityLevel = step.getMinQualityLevel();
+		_workTimeSeconds = step.getWorkTimeSeconds();
+	}
+
 	public WorkStationType getType() {
 		return _type;
 	}
