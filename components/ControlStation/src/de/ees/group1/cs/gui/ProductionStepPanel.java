@@ -20,7 +20,7 @@ import javax.swing.border.Border;
 
 import net.miginfocom.swing.MigLayout;
 import de.ees.group1.model.ProductionStep;
-import de.ees.group1.model.WorkStationType;
+import de.ees.group1.model.WorkstationType;
 
 public class ProductionStepPanel extends JPanel {
 	
@@ -33,7 +33,7 @@ public class ProductionStepPanel extends JPanel {
 	private int number;
 
 	private JLabel numLabel;
-	private JComboBox<WorkStationType> typeCB;
+	private JComboBox<WorkstationType> typeCB;
 	private JComboBox<Integer> qualityCB;
 	private Border badValueBorder = BorderFactory
 			.createLineBorder(Color.RED, 2);
@@ -89,9 +89,9 @@ public class ProductionStepPanel extends JPanel {
 		attribPanel.setBorder(border);
 		attribPanel.add(new JLabel("Art:"));
 		{
-			typeCB = new JComboBox<WorkStationType>(
-					new DefaultComboBoxModel<WorkStationType>(
-							WorkStationType.values()));
+			typeCB = new JComboBox<WorkstationType>(
+					new DefaultComboBoxModel<WorkstationType>(
+							WorkstationType.values()));
 			typeCB.setBorder(goodValueBorder);
 			attribPanel.add(typeCB, "growx, wrap");
 			attribPanel.add(new JLabel("Qualität:"));
@@ -149,7 +149,7 @@ public class ProductionStepPanel extends JPanel {
 	}
 
 	public void save() {
-		step.setType((WorkStationType)typeCB.getSelectedItem());
+		step.setType((WorkstationType)typeCB.getSelectedItem());
 		step.setMinQualityLevel((Integer)qualityCB.getSelectedItem());
 		step.setWorkTimeSeconds(Integer.parseInt(durationTxtField.getText()));
 	}
@@ -157,7 +157,7 @@ public class ProductionStepPanel extends JPanel {
 	public boolean validateForm() {
 		boolean valid = true;
 
-		if (typeCB.getSelectedItem() == WorkStationType.NONE) {
+		if (typeCB.getSelectedItem() == WorkstationType.NONE) {
 			typeCB.setBorder(badValueBorder);
 			valid = false;
 		} else {

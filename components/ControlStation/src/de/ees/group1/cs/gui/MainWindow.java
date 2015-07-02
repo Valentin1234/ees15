@@ -3,6 +3,8 @@ package de.ees.group1.cs.gui;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.List;
 
 import javax.swing.BoxLayout;
@@ -15,12 +17,14 @@ import javax.swing.border.EmptyBorder;
 
 import net.miginfocom.swing.MigLayout;
 import de.ees.group1.model.ProductionOrder;
+import de.ees.group1.model.WorkstationType;
 
 public class MainWindow {
 
 	private JFrame frmControlstation;
 	private OrdersPanel ordersPanel;
-	private IGUIListener listener;
+	private IOrderController orderController;
+	private IWorkstationController workstationController;
 
 	/**
 	 * Launch the application.
@@ -44,8 +48,8 @@ public class MainWindow {
 	public MainWindow() {
 		initialize();
 		
-		//null object to prevent checks for "null"
-		listener = new IGUIListener() {
+		//null objects to prevent checks for "null"
+		orderController = new IOrderController() {
 			@Override
 			public void orderRemovedAction(int orderID) {}
 			@Override
@@ -60,6 +64,13 @@ public class MainWindow {
 			public void orderUpdatedAction(ProductionOrder tmp) {}
 			@Override
 			public void activeOrderCanceledAction() {}
+		};
+		
+		workstationController = new IWorkstationController() {
+			@Override
+			public void workstationTypeUpdatedAction(int id, WorkstationType type) {}
+			@Override
+			public void workstationQualityUpdatedAction(int id, int quality) {}
 		};
 		
 		//TODO: just for testing
@@ -124,19 +135,54 @@ public class MainWindow {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				listener.activeOrderCanceledAction();
+				orderController.activeOrderCanceledAction();
 			}
 		});
 		panel.add(actOrderPanel, "cell 1 0,grow");
 		
 		for(int i = 1; i < 4; i++) {
-			JPanel workstation = new WorkStationPanel(i);
+			JPanel workstation = new WorkstationPanel(i,
+				new ItemListener() {
+					int id;
+					
+					@Override
+					public void itemStateChanged(ItemEvent e) {
+						if (e.getStateChange() == ItemEvent.SELECTED) {
+							workstationController.workstationTypeUpdatedAction(id, (WorkstationType)e.getItem());
+						}
+					}
+					
+					public ItemListener setId(int id) {
+						this.id = id;
+						return this;
+					}
+				}.setId(i),
+				new ItemListener() {
+					int id;
+					
+					@Override
+					public void itemStateChanged(ItemEvent e) {
+						if (e.getStateChange() == ItemEvent.SELECTED) {
+							workstationController.workstationQualityUpdatedAction(id, (Integer)e.getItem());
+						}
+					}
+					
+					public ItemListener setId(int id) {
+						this.id = id;
+						return this;
+					}
+				}.setId(i)
+			);
 			panel.add(workstation, "cell 1 "+(i+1)+",grow");
 		}
 	}
 	
-	public void registerGUIListener(IGUIListener listener) {
-		this.listener = listener;
+	public void registerOrderController(IOrderController controller) {
+		this.orderController = controller;
+	}
+	
+	public void registerWorkStationController(IWorkstationController controller) {
+		this.workstationController = controller;
 	}
 	
 	public void updateOrderList(List<ProductionOrder> list) {
@@ -174,11 +220,11 @@ public class MainWindow {
 					target.setOrder(showEditOrderDialog(target.getOrder()));
 					target.update();
 				} else if (e.getActionCommand() == "Up") {
-					listener.moveOrderUp(target.getOrder().getId());
+					orderController.moveOrderUp(target.getOrder().getId());
 				} else if (e.getActionCommand() == "Down") {
-					listener.moveOrderDown(target.getOrder().getId());
+					orderController.moveOrderDown(target.getOrder().getId());
 				} else if (e.getActionCommand() == "Del") {
-					listener.orderRemovedAction(target.getOrder().getId());
+					orderController.orderRemovedAction(target.getOrder().getId());
 				}
 			}
 			
@@ -191,14 +237,14 @@ public class MainWindow {
 	}
 	
 	private void showAddOrderDialog() {
-		ProductionOrder proto = new ProductionOrder(listener.getNextOrderId());
+		ProductionOrder proto = new ProductionOrder(orderController.getNextOrderId());
 		ProductionOrderDialog prodOrderDialog = new ProductionOrderDialog(proto, frmControlstation);
 		prodOrderDialog.setLocationRelativeTo(frmControlstation);
 		prodOrderDialog.setModal(true);
 		prodOrderDialog.setVisible(true);
 		
 		if(prodOrderDialog.isOrderValid()) {
-			listener.orderCreatedAction(proto);
+			orderController.orderCreatedAction(proto);
 			//TODO just for testing (should be done by the listener)
 			addOrderPanel(proto);
 		}
@@ -211,7 +257,7 @@ public class MainWindow {
 		prodOrderDialog.setVisible(true);
 		
 		if (prodOrderDialog.isOrderValid()) {
-			listener.orderUpdatedAction(tmp);
+			orderController.orderUpdatedAction(tmp);
 			return tmp;
 		}
 		return order;

@@ -22,7 +22,7 @@ public class ProductionStep implements Serializable {
 	/**
 	 * The type of the step to be performed
 	 */
-	private WorkStationType _type;
+	private WorkstationType _type;
 	
 	/**
 	 * The minimum quality level of the tool performing
@@ -36,12 +36,12 @@ public class ProductionStep implements Serializable {
 	private int _workTimeSeconds;
 	
 	public ProductionStep() {
-		_type = WorkStationType.NONE;
+		_type = WorkstationType.NONE;
 		_minQualityLevel = -1;
 		_workTimeSeconds = -1;
 	}
 	
-	public ProductionStep(WorkStationType type, int minQualLevel, int workTimeSeconds) {
+	public ProductionStep(WorkstationType type, int minQualLevel, int workTimeSeconds) {
 		setType(type);
 		setMinQualityLevel(minQualLevel);
 		setWorkTimeSeconds(workTimeSeconds);
@@ -53,11 +53,11 @@ public class ProductionStep implements Serializable {
 		_workTimeSeconds = step.getWorkTimeSeconds();
 	}
 
-	public WorkStationType getType() {
+	public WorkstationType getType() {
 		return _type;
 	}
 
-	public void setType(WorkStationType _type) {
+	public void setType(WorkstationType _type) {
 		this._type = _type;
 	}
 
