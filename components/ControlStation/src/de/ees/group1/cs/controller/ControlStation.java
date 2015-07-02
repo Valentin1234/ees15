@@ -1,10 +1,10 @@
 package de.ees.group1.cs.controller;
 
 import de.ees.group1.com.IControlStation;
-import de.ees.group1.cs.gui.IGUIListener;
+import de.ees.group1.cs.gui.IOrderController;
 import de.ees.group1.model.ProductionOrder;
 
-public class ControlStation implements IGUIListener, IControlStation {
+public class ControlStation implements IOrderController, IControlStation {
 
 	@Override
 	public void orderCreatedAction(ProductionOrder order) {
@@ -44,6 +44,12 @@ public class ControlStation implements IGUIListener, IControlStation {
 
 	@Override
 	public void orderUpdatedAction(ProductionOrder tmp) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void activeOrderCanceledAction() {
 		// TODO Auto-generated method stub
 		
 	}

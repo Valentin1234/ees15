@@ -2,7 +2,7 @@ package de.ees.group1.cs.gui;
 
 import de.ees.group1.model.ProductionOrder;
 
-public interface IGUIListener {
+public interface IOrderController {
 	
 	public void orderCreatedAction(ProductionOrder order);
 	
@@ -15,5 +15,7 @@ public interface IGUIListener {
 	public int getNextOrderId();
 
 	public void orderUpdatedAction(ProductionOrder tmp);
+
+	public void activeOrderCanceledAction();
 
 }
