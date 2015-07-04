@@ -10,13 +10,13 @@ public class Telegramm implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int destination;
 	private int source;
-	private Serializable data;
+	private int type;
 	
-	public Telegramm(int dest, int source, Serializable data){
+	public Telegramm(int dest, int source, int type){
 		
 		this.destination = dest;
 		this.source = source;
-		this.data = data;
+		this.type = type;
 		
 	}
 	
@@ -32,9 +32,9 @@ public class Telegramm implements Serializable {
 		
 	}
 	
-	public Serializable getData(){
+	public int getType(){
 		
-		return this.data;
+		return this.type;
 		
 	}
 	

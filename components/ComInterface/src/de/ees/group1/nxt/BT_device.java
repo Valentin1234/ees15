@@ -2,17 +2,15 @@ package de.ees.group1.nxt;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
 
 import lejos.nxt.LCD;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
-import de.ees.group1.model.ProductionOrder;
+import de.ees.group1.model.Ack_Telegram;
+import de.ees.group1.model.ProductionStep;
+import de.ees.group1.model.State_Telegram;
+import de.ees.group1.model.Step_Telegram;
 import de.ees.group1.model.Telegramm;
 
 public class BT_device {
@@ -20,8 +18,6 @@ public class BT_device {
 	private NXTConnection connection = null;
 	private OutputStream dos = null;
 	private InputStream dis = null;
-	private ObjectInput in = null;
-	private ObjectOutput out = null;
 	
 	public BT_device(){
 		
@@ -36,23 +32,13 @@ public class BT_device {
 			this.dis = this.connection.openInputStream();
 			this.dos = this.connection.openOutputStream();
 			
+			return true;
+			
 		}else{
 			
 			LCD.drawString("Fehler: ", 0, 0);
 			LCD.drawString("Es existiert bereits eine Verbindung", 0, 1);
 			
-		}
-		try{
-			
-			this.in = new ObjectInputStream(this.dis);
-			this.out = new ObjectOutputStream(this.dos);
-			return true;
-			
-		}catch(IOException e){
-			
-			System.out.println(e.getMessage());
-			LCD.drawString("Fehler: ", 0, 0);
-			LCD.drawString("Stream konnte nicht geöffnet werden", 0, 1);
 			return false;
 			
 		}
@@ -65,8 +51,6 @@ public class BT_device {
 			
 			this.dos.close();
 			this.dis.close();
-			this.out.close();
-			this.in.close();
 			this.connection.close();
 			
 		}catch(IOException e){
@@ -79,64 +63,49 @@ public class BT_device {
 	
 	public boolean sendMessage(Telegramm message){
 		
-		try {
-			
-			this.out.writeObject(message);
-			this.dos.flush();
-			return true;
-			
-		}catch(IOException e){
-			
-			e.printStackTrace();
-			
-		}
-		
 		return false;
 		
 	}
 	
-	public Serializable receiveMessage() throws ClassNotFoundException{
+	public Telegramm receiveMessage() throws ClassNotFoundException{
 		
-		Object obj;
+		byte[] message; 
+		int length_1 = 0;
+		int length_2 = 0;
+		int length = 0;
 		
 		try{
-			
-			obj = this.in.readObject();
-			Telegramm t = (Telegramm)obj;
-			if(t.getData() instanceof ProductionOrder) {
-				return (ProductionOrder) t.getData();
-			}/*else if(t.getData() instanceof boolean) {
-				return (boolean) t.getData();
-			}//*/
-			
-		}catch(IOException e){
-			
-			System.out.println(e.getMessage());
-			
-		}
+			length_1 = dis.read()*16*16;
+			length_1 = dis.read();
+			message = new byte[length_1];
+			length = dis.read(message);
+			length_2 = dis.read()*16*16;
+			length_2 = dis.read();
+			LCD.drawInt(length_1, 0, 0);
+			LCD.drawInt(length_2, 0, 1);
+			LCD.drawInt(length, 0, 2);
+		}catch(IOException e){}
 		
 		return null;
 		
 	}
 		
-	public Telegramm createMessage(int destination, int source, Serializable data){
+	public Ack_Telegram createMessage(int destination, int source, boolean data){
 		
-		return new Telegramm(destination, source, data);
+		return new Ack_Telegram(destination, source, data);
 				
 	}
 	
-	public boolean sendAck(){
+	public Step_Telegram createMessage(int destination, int source, ProductionStep data){
 		
-		if(sendMessage(createMessage(0,16,true))){
-			
-			return true;
-			
-		}else{
-			
-			return false;
-			
-		}
-		
+		return new Step_Telegram(destination, source, data);
+				
 	}
 	
+	public State_Telegram createMessage(int destination, int source, int data){
+		
+		return new State_Telegram(destination, source);
+				
+	}
+		
 }
