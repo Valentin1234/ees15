@@ -44,6 +44,12 @@ public class BT_device /*implements DiscoveryListener*/ {
 		
 	}
 	
+	/**
+	 * Stellt eine Verbindung zu dem Fahrzeug her.
+	 * 
+	 * @return true, wenn Verbindung hergestellt wurde, andernfalls false
+	 * @throws IOException
+	 */
 	public boolean searchRemoteDevice() throws IOException{
 		
 		this.nxtInfo = new NXTInfo(NXTCommFactory.BLUETOOTH, "NXT", this.mac);
@@ -62,7 +68,6 @@ public class BT_device /*implements DiscoveryListener*/ {
 	}
 	
 	/**
-	 * 
 	 * Definiert die zu Suchende MAC-Adresse
 	 * @param mac MAC-Adresse
 	 * 
@@ -73,6 +78,10 @@ public class BT_device /*implements DiscoveryListener*/ {
 		
 	}
 	
+	/**
+	 * Stellt Streams über die Verbindung her.
+	 * @return 
+	 */
 	public boolean startService(){
 		
 		this.dos = nxtComm.getOutputStream();
@@ -82,6 +91,11 @@ public class BT_device /*implements DiscoveryListener*/ {
 		
 	}
 	
+	/**
+	 * Überträgt ein Telegramm an den NXT.
+	 * @param message Zu übertragende Nachricht.
+	 * @return true, wenn Übertragung erfolgreich.
+	 */
 	public boolean sendMessage(Telegramm message){
 	
 		ObjectOutput out = null;
@@ -108,13 +122,22 @@ public class BT_device /*implements DiscoveryListener*/ {
 		
 	}
 	
+	/**
+	 * Beendet die Verbindung mit dem Fahrzeug
+	 * @throws IOException
+	 */
 	public void close() throws IOException{
 		
 		this.dis.close();
 		this.dos.close();
 		
 	}
-		
+	
+	/**
+	 * Wandelt ein Byte-Array in einen Hex-String um
+	 * @param data Byte-Array
+	 * @return Hex-String
+	 */
 	public String byteToHex(byte[] data){
 		
 		StringBuffer sb = new StringBuffer();

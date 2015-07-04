@@ -105,7 +105,9 @@ public class BT_device {
 			Telegramm t = (Telegramm)obj;
 			if(t.getData() instanceof ProductionOrder) {
 				return (ProductionOrder) t.getData();
-			}
+			}/*else if(t.getData() instanceof boolean) {
+				return (boolean) t.getData();
+			}//*/
 			
 		}catch(IOException e){
 			
@@ -121,6 +123,20 @@ public class BT_device {
 		
 		return new Telegramm(destination, source, data);
 				
+	}
+	
+	public boolean sendAck(){
+		
+		if(sendMessage(createMessage(0,16,true))){
+			
+			return true;
+			
+		}else{
+			
+			return false;
+			
+		}
+		
 	}
 	
 }
