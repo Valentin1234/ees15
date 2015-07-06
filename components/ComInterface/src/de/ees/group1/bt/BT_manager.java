@@ -8,6 +8,8 @@ import javax.bluetooth.RemoteDevice;
 import de.ees.group1.com.IComProvider;
 import de.ees.group1.com.IControlStation;
 import de.ees.group1.com.IWorkStation;
+import de.ees.group1.model.Ack_Telegram;
+import de.ees.group1.model.Order_Telegram;
 import de.ees.group1.model.ProductionOrder;
 import de.ees.group1.model.Telegramm;
 
@@ -84,7 +86,7 @@ public class BT_manager implements IComProvider{
 	
 	public void transmitProductionOrder(ProductionOrder order){
 
-		Telegramm tele = new Telegramm(16,0,order);
+		Telegramm tele = new Order_Telegram(16,0,order);
 		
 		if(this.localDev.sendMessage(tele)){
 			
@@ -100,7 +102,7 @@ public class BT_manager implements IComProvider{
 	
 	public void transmitYes(){
 		
-		Telegramm tele = new Telegramm(16,0,true);
+		Telegramm tele = new Ack_Telegram(16,0,true);
 		
 		if(this.localDev.sendMessage(tele)){
 			
@@ -116,7 +118,7 @@ public class BT_manager implements IComProvider{
 	
 	public void transmitNo(){
 		
-		Telegramm tele = new Telegramm(16,0,false);
+		Telegramm tele = new Ack_Telegram(16,0,false);
 		
 		if(this.localDev.sendMessage(tele)){
 			
