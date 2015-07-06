@@ -122,7 +122,7 @@ public class BT_device {
 	
 	public State_Telegram createMessage(int destination, int source, int data){
 		
-		return new State_Telegram(destination, source);
+		return new State_Telegram(destination, source, data);
 				
 	}
 		

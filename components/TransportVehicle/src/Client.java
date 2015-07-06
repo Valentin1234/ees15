@@ -44,14 +44,20 @@ public class Client {
 		
 		if(localDev.connect()){
 			try{
+				//Auf Nachricht warten, blockiert
 				localDev.receiveMessage();
-				localDev.sendMessage(localDev.createMessage(0, 16, true));
-				localDev.sendMessage(localDev.createMessage(1, 16, new ProductionStep()));
+				//Acknowledgement an Leitstation übertragen
+				localDev.sendMessage(new Ack_Telegram(0, 16, true));
+				//Daten des aktuellen Produktionsschrittes übertragen
+				localDev.sendMessage(new Step_Telegram(1, 16, new ProductionStep()));
 				localDev.receiveMessage();
-				localDev.sendMessage(localDev.createMessage(0, 16, 1));
-				localDev.sendMessage(localDev.createMessage(1, 16, true));
+				//aktuellen Zustand übertragen
+				localDev.sendMessage(new State_Telegram(0, 16, 1));
+				//Acknowledgement an Bearbeitungsstation1 übertragen
+				localDev.sendMessage(new Ack_Telegram(1, 16, true));
 				localDev.receiveMessage();
-				localDev.sendMessage(localDev.createMessage(0, 16, 255));
+				//Erfolgreiche Beendigung des Arbeitsauftrages übertragen
+				localDev.sendMessage(new State_Telegram(0, 16, 255));
 			}catch(ClassNotFoundException e){
 				
 			}
