@@ -1,37 +1,30 @@
 package de.ees.group1.cs.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 
 import net.miginfocom.swing.MigLayout;
 import de.ees.group1.model.ProductionOrder;
+import de.ees.group1.model.WorkstationType;
 
 public class MainWindow {
 
 	private JFrame frmControlstation;
 	private OrdersPanel ordersPanel;
-	private IGUIListener listener;
+	private IOrderController orderController;
+	private IWorkstationController workstationController;
 
 	/**
 	 * Launch the application.
@@ -55,8 +48,8 @@ public class MainWindow {
 	public MainWindow() {
 		initialize();
 		
-		//null object to prevent checks for "null"
-		listener = new IGUIListener() {
+		//null objects to prevent checks for "null"
+		orderController = new IOrderController() {
 			@Override
 			public void orderRemovedAction(int orderID) {}
 			@Override
@@ -69,6 +62,15 @@ public class MainWindow {
 			public void moveOrderDown(int orderID) {}
 			@Override
 			public void orderUpdatedAction(ProductionOrder tmp) {}
+			@Override
+			public void activeOrderCanceledAction() {}
+		};
+		
+		workstationController = new IWorkstationController() {
+			@Override
+			public void workstationTypeUpdatedAction(int id, WorkstationType type) {}
+			@Override
+			public void workstationQualityUpdatedAction(int id, int quality) {}
 		};
 		
 		//TODO: just for testing
@@ -116,7 +118,7 @@ public class MainWindow {
 		mnAuftrag.add(mntmAnlegen);
 		
 		JPanel panel = new JPanel();
-		panel.setLayout(new MigLayout("", "[50%][50%]", "[][][][][grow]"));
+		panel.setLayout(new MigLayout("", "[50%][50%]", "[][grow][][][]"));
 		panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		frmControlstation.getContentPane().add(panel);
 		
@@ -129,22 +131,58 @@ public class MainWindow {
 		});
 		panel.add(ordersPanel, "cell 0 0,grow, span 1 5");
 		
-		JPanel panel_2 = new JPanel();
-		panel_2.setMinimumSize(new Dimension(300, -1));
-		panel_2.setBorder(new TitledBorder(null, "aktueller Auftrag", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_2.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		panel.add(panel_2, "cell 1 0,grow");
-		panel_2.setLayout(new MigLayout("", "[][]", "[][][]"));
+		JPanel actOrderPanel = new ActiveOrderPanel(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				orderController.activeOrderCanceledAction();
+			}
+		});
+		panel.add(actOrderPanel, "cell 1 0,grow");
 		
-		JLabel lblNewLabel = new JLabel("Auftragsnummer:");
-		panel_2.add(lblNewLabel, "cell 0 0");
-		
-		JLabel lblNewLabel_1 = new JLabel("akt. Bearb.-schritt:");
-		panel_2.add(lblNewLabel_1, "cell 0 1");
+		for(int i = 1; i < 4; i++) {
+			JPanel workstation = new WorkstationPanel(i,
+				new ItemListener() {
+					int id;
+					
+					@Override
+					public void itemStateChanged(ItemEvent e) {
+						if (e.getStateChange() == ItemEvent.SELECTED) {
+							workstationController.workstationTypeUpdatedAction(id, (WorkstationType)e.getItem());
+						}
+					}
+					
+					public ItemListener setId(int id) {
+						this.id = id;
+						return this;
+					}
+				}.setId(i),
+				new ItemListener() {
+					int id;
+					
+					@Override
+					public void itemStateChanged(ItemEvent e) {
+						if (e.getStateChange() == ItemEvent.SELECTED) {
+							workstationController.workstationQualityUpdatedAction(id, (Integer)e.getItem());
+						}
+					}
+					
+					public ItemListener setId(int id) {
+						this.id = id;
+						return this;
+					}
+				}.setId(i)
+			);
+			panel.add(workstation, "cell 1 "+(i+1)+",grow");
+		}
 	}
 	
-	public void registerGUIListener(IGUIListener listener) {
-		this.listener = listener;
+	public void registerOrderController(IOrderController controller) {
+		this.orderController = controller;
+	}
+	
+	public void registerWorkStationController(IWorkstationController controller) {
+		this.workstationController = controller;
 	}
 	
 	public void updateOrderList(List<ProductionOrder> list) {
@@ -182,11 +220,11 @@ public class MainWindow {
 					target.setOrder(showEditOrderDialog(target.getOrder()));
 					target.update();
 				} else if (e.getActionCommand() == "Up") {
-					listener.moveOrderUp(target.getOrder().getId());
+					orderController.moveOrderUp(target.getOrder().getId());
 				} else if (e.getActionCommand() == "Down") {
-					listener.moveOrderDown(target.getOrder().getId());
+					orderController.moveOrderDown(target.getOrder().getId());
 				} else if (e.getActionCommand() == "Del") {
-					listener.orderRemovedAction(target.getOrder().getId());
+					orderController.orderRemovedAction(target.getOrder().getId());
 				}
 			}
 			
@@ -199,14 +237,14 @@ public class MainWindow {
 	}
 	
 	private void showAddOrderDialog() {
-		ProductionOrder proto = new ProductionOrder(listener.getNextOrderId());
+		ProductionOrder proto = new ProductionOrder(orderController.getNextOrderId());
 		ProductionOrderDialog prodOrderDialog = new ProductionOrderDialog(proto, frmControlstation);
 		prodOrderDialog.setLocationRelativeTo(frmControlstation);
 		prodOrderDialog.setModal(true);
 		prodOrderDialog.setVisible(true);
 		
 		if(prodOrderDialog.isOrderValid()) {
-			listener.orderCreatedAction(proto);
+			orderController.orderCreatedAction(proto);
 			//TODO just for testing (should be done by the listener)
 			addOrderPanel(proto);
 		}
@@ -219,7 +257,7 @@ public class MainWindow {
 		prodOrderDialog.setVisible(true);
 		
 		if (prodOrderDialog.isOrderValid()) {
-			listener.orderUpdatedAction(tmp);
+			orderController.orderUpdatedAction(tmp);
 			return tmp;
 		}
 		return order;
