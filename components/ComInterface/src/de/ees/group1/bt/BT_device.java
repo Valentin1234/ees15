@@ -5,12 +5,12 @@ import java.io.InputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
-
 import de.ees.group1.model.Telegramm;
 
 /**
@@ -97,29 +97,25 @@ public class BT_device /*implements DiscoveryListener*/ {
 	 * @return true, wenn Übertragung erfolgreich.
 	 */
 	public boolean sendMessage(Telegramm message){
-	
-		ObjectOutput out = null;
+
+		int length = 0;
 		
-		try {
-			out = new ObjectOutputStream(this.dos);
-			out.writeObject(message);
-			this.dos.flush();
+		String transformed = message.transform();
+		length = transformed.length();
+		byte[] data = message.concat(ByteBuffer.allocate(2).putInt(length).array(), transformed.getBytes());
+		data = message.concat(data, ByteBuffer.allocate(2).putInt(length).array());
+		
+		try{
+			
+			dos.write(data);
 			return true;
+			
 		}catch(IOException e){
-			e.printStackTrace();
-		}finally {
-			try{
-				if( out != null ){
-					out.close();
-				}
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-			}
+			
+			return false;	
 			
 		}
-		
-		return false;
-		
+			
 	}
 	
 	/**

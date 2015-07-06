@@ -1,4 +1,3 @@
-package de.ees.group1.nxt;
 
 
 import java.io.IOException;
