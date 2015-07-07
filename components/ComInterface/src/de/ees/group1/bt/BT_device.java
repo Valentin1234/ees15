@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
+import lejos.nxt.LCD;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
@@ -91,6 +92,31 @@ public class BT_device /*implements DiscoveryListener*/ {
 		
 	}
 	
+	public Telegramm receiveMessage(){
+		
+		byte[] message; 
+		int length_1 = 0;
+		int length_2 = 0;
+		int length = 0;
+		
+		try{
+			length_1 = dis.read()*16*16;
+			length_1 = dis.read();
+			message = new byte[length_1];
+			length = dis.read(message);
+			length_2 = dis.read()*16*16;
+			length_2 = dis.read();
+			System.out.println(length_1+"/n");
+			System.out.println(length_2+"/n");
+			System.out.println(length+"/n");
+		}catch(IOException e){
+			System.out.println(e.getMessage());
+		}
+		
+		return null;
+		
+	}
+	
 	/**
 	 * Überträgt ein Telegramm an den NXT.
 	 * @param message Zu übertragende Nachricht.
@@ -98,12 +124,14 @@ public class BT_device /*implements DiscoveryListener*/ {
 	 */
 	public boolean sendMessage(Telegramm message){
 
+		double quot = 0;
+		int bytes = 0;
 		int length = 0;
 		
 		String transformed = message.transform();
 		length = transformed.length();
-		byte[] data = message.concat(ByteBuffer.allocate(2).putInt(length).array(), transformed.getBytes());
-		data = message.concat(data, ByteBuffer.allocate(2).putInt(length).array());
+		byte[] data = message.concat(ByteBuffer.allocate(4).putInt(length).array(), transformed.getBytes());
+		data = message.concat(data, ByteBuffer.allocate(4).putInt(length).array());
 		
 		try{
 			

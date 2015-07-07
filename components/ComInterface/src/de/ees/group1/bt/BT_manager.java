@@ -84,6 +84,12 @@ public class BT_manager implements IComProvider{
 		
 	}
 	
+	public void getMessage(){
+		
+		Telegramm tele = this.localDev.receiveMessage();
+		
+	}
+	
 	public void transmitProductionOrder(ProductionOrder order){
 
 		Telegramm tele = new Order_Telegram(16,0,order);
