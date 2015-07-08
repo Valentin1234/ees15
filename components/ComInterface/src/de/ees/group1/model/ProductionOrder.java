@@ -41,4 +41,8 @@ public class ProductionOrder extends LinkedList<ProductionStep> {
 			throw new IllegalArgumentException("The order ID must be a number between 0 and 100");
 		this._id = id;
 	}
+	
+	public ProductionStep getStep(int stepNumber){
+		return this.get(stepNumber);
+	}
 }
