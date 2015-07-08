@@ -9,7 +9,25 @@ public class WorkStation {
 	/*
 	 * Gibt den Status der Arbeitsstation zurück. -1...default, 0...bereit, 1...in Betrieb, 2...defekt 
 	 */
-	public int status;
+	private int status;
+	private int maxQualityLevel;
+	
+	public int getMaxQualityLevel(){
+		return maxQualityLevel;
+	}
+	
+	public void setMaxQualityLevel(int maxQualityLevel){
+		this.maxQualityLevel=maxQualityLevel;
+	}
+	
+	public int getStatus(){
+		return status;
+	}
+	
+	public void setStatus(int status){
+		this.status=status;
+	}
+	
 	public boolean work(ProductionStep step) {
 		int time=step.getWorkTimeSeconds();
 		time=time*1000;
