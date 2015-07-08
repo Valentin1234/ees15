@@ -26,6 +26,11 @@ public class ControlStation {
 		currentStepNumber++;
 	}
 	
+	public ProductionStep getCurrentStep(){
+		return currentStep;
+	}
+	
+	
 	
 	
 
