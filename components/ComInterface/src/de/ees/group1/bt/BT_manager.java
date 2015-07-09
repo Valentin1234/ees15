@@ -140,6 +140,18 @@ public class BT_manager implements IComProvider{
 	
 	public void transmitFinishedStep(){
 		
+		Telegramm tele = new Ack_Telegram(16,0,true);
+		
+		if(this.localDev.sendMessage(tele)){
+			
+			System.out.println("Datenübertragung erfolgreich");
+			
+		} else{
+			
+			System.out.println("Datenübertragung fehlgeschlagen");
+						
+		}
+		
 	}
 
 }

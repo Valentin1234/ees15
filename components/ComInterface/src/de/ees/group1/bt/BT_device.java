@@ -85,7 +85,6 @@ public class BT_device /*implements DiscoveryListener*/ {
 	 */
 	public boolean startService(){
 		
-		this.dos = nxtComm.getOutputStream();
 		this.dis = nxtComm.getInputStream();
 		
 		return true;
@@ -101,14 +100,12 @@ public class BT_device /*implements DiscoveryListener*/ {
 		
 		try{
 			length_1 = dis.read()*16*16;
-			length_1 = dis.read();
+			length_1 = length_1 + dis.read();
 			message = new byte[length_1];
 			length = dis.read(message);
 			length_2 = dis.read()*16*16;
-			length_2 = dis.read();
-			System.out.println(length_1+"/n");
-			System.out.println(length_2+"/n");
-			System.out.println(length+"/n");
+			length_2 = length_2 + dis.read();
+			System.out.println(message.toString());
 		}catch(IOException e){
 			System.out.println(e.getMessage());
 		}
@@ -124,18 +121,22 @@ public class BT_device /*implements DiscoveryListener*/ {
 	 */
 	public boolean sendMessage(Telegramm message){
 
-		double quot = 0;
-		int bytes = 0;
 		int length = 0;
 		
 		String transformed = message.transform();
 		length = transformed.length();
-		byte[] data = message.concat(ByteBuffer.allocate(4).putInt(length).array(), transformed.getBytes());
-		data = message.concat(data, ByteBuffer.allocate(4).putInt(length).array());
-		
+		byte[] data = new byte[5];
+		for(int i = 0; i<5; ++i){
+			int shift = i << 3;
+			data[4-i] = (byte)((length & (0xff << shift))>>shift);
+		}
+				
 		try{
 			
-			dos.write(data);
+			this.dos = nxtComm.getOutputStream();
+			this.dos.write(data);
+			this.dos.flush();
+			this.dos.close();
 			return true;
 			
 		}catch(IOException e){
@@ -153,7 +154,6 @@ public class BT_device /*implements DiscoveryListener*/ {
 	public void close() throws IOException{
 		
 		this.dis.close();
-		this.dos.close();
 		
 	}
 	

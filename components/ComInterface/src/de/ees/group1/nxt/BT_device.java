@@ -31,8 +31,8 @@ public class BT_device {
 			
 			LCD.drawString("Verbinde...", 0, 0);
 			this.connection = Bluetooth.waitForConnection();
-			this.dis = this.connection.openInputStream();
-			this.dos = this.connection.openOutputStream();
+			this.dis = this.connection.openDataInputStream();
+			this.dos = this.connection.openDataOutputStream();
 			
 			return true;
 			
@@ -69,8 +69,11 @@ public class BT_device {
 		
 		String transformed = message.transform();
 		length = transformed.length();
-		byte[] data = message.concat(ByteBuffer.allocate(2).putInt(length).array(), transformed.getBytes());
-		data = message.concat(data, ByteBuffer.allocate(2).putInt(length).array());
+		byte[] data = new byte[4];
+		for(int i = 0; i<4; ++i){
+			int shift = i << 3;
+			data[3-i] = (byte)((length & (0xff << shift))>>shift);
+		}
 		
 		try{
 			
@@ -94,10 +97,14 @@ public class BT_device {
 		
 		try{
 			length_1 = dis.read()*16*16;
+			LCD.drawInt(length_1, 0, 0);
 			length_1 = dis.read();
+			LCD.drawInt(length_1, 0, 0);
 			message = new byte[length_1];
 			length = dis.read(message);
+			LCD.drawInt(length, 0, 2);
 			length_2 = dis.read()*16*16;
+			LCD.drawInt(length_2, 0, 1);
 			length_2 = dis.read();
 			LCD.drawInt(length_1, 0, 0);
 			LCD.drawInt(length_2, 0, 1);
