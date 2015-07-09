@@ -11,7 +11,21 @@ public class Stationsanfahrt extends State{
 		pilot.setTravelSpeed(250); // Geschwindigkeit
 		pilot.setRotateSpeed(250); // Rotationsgeschwindigkeit
 		
+		
+		//wenn die Leitstation sagt weiterfahren
+		//if(){}
 		pilot.travel(150); Sound.twoBeeps(); 
+		
+		//wenn die Leitstation sagt in die Station einfahren
+		//else{
+		//pilot.rotate(-93);
+		//pilot.travel(150);
+	
+			//warte die von der Leitstation vorgeschreibene Zeit
+	
+		//pilot.travel(-150);
+		//pilot.rotate(93);
+		//}
 		
 		Client.state = new LinieFolgen();
 	}

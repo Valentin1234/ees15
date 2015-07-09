@@ -23,17 +23,21 @@ public class LinieFolgen extends State {
 			wert = Client.lightSensor.getLightValue(); // lies Farbwert ein
 			LCD.drawInt(wert, 0, 1); // gibt Wert auf Display aus
 
-			
+			//wenn alle 3 Lichtsensoren grau erkennen...
 			if(Client.werte.getGrey2()+3 > Client.lightSensor2.getLightValue() && (Client.werte.getGrey2()-3 < Client.lightSensor2.getLightValue())
-					&& Client.werte.getGrey2()+3 > Client.lightSensor3.getLightValue() && (Client.werte.getGrey2()-3 < Client.lightSensor3.getLightValue())	)
+					&& Client.werte.getGrey2()+3 > Client.lightSensor3.getLightValue() && (Client.werte.getGrey2()-3 < Client.lightSensor3.getLightValue())
+					&& Client.werte.getGrey()+3 > Client.lightSensor.getLightValue() && (Client.werte.getGrey()-3 < Client.lightSensor.getLightValue()))
 			{
 
 				Client.statemachine ++; 
-			  
+				
+				// wenn das 5. Graufeld erkannt wurde parke ein
 				if(Client.statemachine > 4){ 
 					Client.state = new Einparken();
 					Client.main(null);
 				  
+				//wenn weniger als 5 Felder erkannt wurden wechsle in den Status Stationsanfahrt
+				//dort wird entschiden, ob die Station angefahren wird oder nicht	
 				}else { 
 					Client.state = new Stationsanfahrt();
 					Client.main(null);
@@ -49,7 +53,7 @@ public class LinieFolgen extends State {
 				while (!Button.ESCAPE.isPressed() && Client.lightSensor.getLightValue() > (Client.werte.getBlack() + 4) /* && (winkel*dir*anz)<160 */) // Solange der Sensor kein schwarz erkennt
 																					
 				{ 
-					
+					//wenn vorderen beiden sensoren grau erkennen abbrechen
 					if(Client.werte.getGrey2()+3 > Client.lightSensor2.getLightValue() && (Client.werte.getGrey2()-3 < Client.lightSensor2.getLightValue())
 							&& Client.werte.getGrey2()+3 > Client.lightSensor3.getLightValue() && (Client.werte.getGrey2()-3 < Client.lightSensor3.getLightValue())	)
 					{

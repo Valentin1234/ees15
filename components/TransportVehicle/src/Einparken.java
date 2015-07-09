@@ -12,6 +12,9 @@ public class Einparken extends State{
 		
 		 pilot.rotate(300);
 		  pilot.travel(300);
+		  Client.statemachine = 0;
+		  
+		  //Bluetoot anfrage
 		  
 		  Client.state = new Kalibrierend();
 	}
