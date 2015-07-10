@@ -220,6 +220,10 @@ public class MainWindow {
 		
 	}
 	
+	public void updateWorkstationState() {
+		
+	}
+	
 	private void addOrderPanel(ProductionOrder order) {
 		ListedOrderPanel panel = new ListedOrderPanel(order);
 		panel.addActionListener(new ActionListener() {
