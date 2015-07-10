@@ -15,9 +15,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import net.miginfocom.swing.MigLayout;
 import de.ees.group1.model.ProductionOrder;
 import de.ees.group1.model.WorkstationType;
+import net.miginfocom.swing.MigLayout;
 
 public class MainWindow {
 
@@ -25,6 +25,7 @@ public class MainWindow {
 	private OrdersPanel ordersPanel;
 	private IOrderController orderController;
 	private IWorkstationController workstationController;
+	private IConnectionController connectionController;
 
 	/**
 	 * Launch the application.
@@ -73,6 +74,10 @@ public class MainWindow {
 			public void workstationQualityUpdatedAction(int id, int quality) {}
 		};
 		
+		connectionController = new IConnectionController() {
+			@Override public void connectBT(byte[] MAC) {}
+		};
+		
 		//TODO: just for testing
 		addOrderPanel(new ProductionOrder(20));
 	}
@@ -98,8 +103,11 @@ public class MainWindow {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				BTConnectDialog connDlg = new BTConnectDialog(frmControlstation);
+				connDlg.setVisible(true);
+				if(!connDlg.isCancled) {
+					connectionController.connectBT(connDlg.macAddress);
+				}
 			}
 		});
 		mnCom.add(mntmMAC);
@@ -185,6 +193,10 @@ public class MainWindow {
 		this.workstationController = controller;
 	}
 	
+	public void registerConnectionController(IConnectionController controller) {
+		this.connectionController = controller;
+	}
+	
 	public void updateOrderList(List<ProductionOrder> list) {
 		ListedOrderPanel[] orderPanels = ordersPanel.getOrderPanels();
 		int i = 0;
@@ -205,6 +217,10 @@ public class MainWindow {
 	}
 	
 	public void updateActiveOrder(ProductionOrder order) {
+		
+	}
+	
+	public void updateWorkstationState() {
 		
 	}
 	
