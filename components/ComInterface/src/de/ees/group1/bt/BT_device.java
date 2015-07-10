@@ -2,12 +2,8 @@ package de.ees.group1.bt;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 
-import lejos.nxt.LCD;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
@@ -91,24 +87,27 @@ public class BT_device /*implements DiscoveryListener*/ {
 		
 	}
 	
-	public Telegramm receiveMessage(){
+	public Telegramm receiveMessage() throws IOException{
 		
-		byte[] message; 
+		String message;
+		byte[] data; 
 		int length_1 = 0;
 		int length_2 = 0;
 		int length = 0;
 		
-		try{
-			length_1 = dis.read()*16*16;
-			length_1 = length_1 + dis.read();
-			message = new byte[length_1];
-			length = dis.read(message);
-			length_2 = dis.read()*16*16;
-			length_2 = length_2 + dis.read();
-			System.out.println(message.toString());
-		}catch(IOException e){
-			System.out.println(e.getMessage());
-		}
+		length_1 = dis.read()*16*16;
+		length_1 = length_1 + dis.read();
+		data = new byte[length_1];
+		length = dis.read(data);
+		length_2 = dis.read()*16*16;
+		length_2 = length_2 + dis.read();
+		message = new String(data);
+		
+		System.out.println("Länge 1: "+length_1);
+
+		System.out.println("Nachricht: "+message);
+		
+		System.out.println("Länge 2: "+length_2);		
 		
 		return null;
 		
@@ -122,15 +121,21 @@ public class BT_device /*implements DiscoveryListener*/ {
 	public boolean sendMessage(Telegramm message){
 
 		int length = 0;
+		byte[] length_data = new byte[2];
 		
 		String transformed = message.transform();
+		System.out.println(transformed);
 		length = transformed.length();
-		byte[] data = new byte[5];
-		for(int i = 0; i<5; ++i){
+		System.out.println(""+length);
+		for(int i = 0; i<2; ++i){
 			int shift = i << 3;
-			data[4-i] = (byte)((length & (0xff << shift))>>shift);
+			length_data[1-i] = (byte)((length & (0xff << shift))>>shift);
 		}
-				
+		
+		byte[] data = message.concat(length_data, message.concat(transformed.getBytes(), length_data));
+		System.out.println(data.toString());
+		System.out.println(new String(data));
+		
 		try{
 			
 			this.dos = nxtComm.getOutputStream();
@@ -176,35 +181,5 @@ public class BT_device /*implements DiscoveryListener*/ {
 		return sb.toString();
 		
 	}
-	
-//	public byte[] toByte(Telegramm tele){
-//		
-//		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//		ObjectOutput out = null;
-//		
-//		try {
-//			out = new ObjectOutputStream(bos);
-//			out.writeObject(tele);
-//			return bos.toByteArray();
-//		}catch(IOException e){
-//			e.printStackTrace();
-//		}finally {
-//			try{
-//				if( out != null ){
-//					out.close();
-//				}
-//			} catch (IOException e) {
-//				System.out.println(e.getMessage());
-//			}
-//			try{
-//				bos.close();
-//			}catch(IOException e) {
-//				System.out.println(e.getMessage());	
-//			}
-//		
-//		}
-//		return null;
-//		
-//	}
-	
+		
 }

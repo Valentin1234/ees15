@@ -86,7 +86,11 @@ public class BT_manager implements IComProvider{
 	
 	public void getMessage(){
 		
-		Telegramm tele = this.localDev.receiveMessage();
+		try{
+			Telegramm tele = this.localDev.receiveMessage();
+		}catch(IOException e){
+			System.out.println(e.getMessage());
+		}
 		
 	}
 	

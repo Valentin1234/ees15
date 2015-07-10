@@ -4,7 +4,7 @@ package de.ees.group1.nxt;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
+
 
 import lejos.nxt.LCD;
 import lejos.nxt.comm.Bluetooth;
@@ -31,9 +31,6 @@ public class BT_device {
 			
 			LCD.drawString("Verbinde...", 0, 0);
 			this.connection = Bluetooth.waitForConnection();
-			this.dis = this.connection.openDataInputStream();
-			this.dos = this.connection.openDataOutputStream();
-			
 			return true;
 			
 		}else{
@@ -49,18 +46,8 @@ public class BT_device {
 	
 	public void close(){
 		
-		try{
-			
-			this.dos.close();
-			this.dis.close();
-			this.connection.close();
-			
-		}catch(IOException e){
-			
-			System.out.println(e);
-			
-		}
-		
+		this.connection.close();
+
 	}
 	
 	public boolean sendMessage(Telegramm message){
@@ -69,15 +56,21 @@ public class BT_device {
 		
 		String transformed = message.transform();
 		length = transformed.length();
-		byte[] data = new byte[4];
-		for(int i = 0; i<4; ++i){
+		
+		byte[] length_data = new byte[2];
+		for(int i = 0; i<2; ++i){
 			int shift = i << 3;
-			data[3-i] = (byte)((length & (0xff << shift))>>shift);
+			length_data[1-i] = (byte)((length & (0xff << shift))>>shift);
 		}
+		
+		byte[] data = message.concat(length_data, message.concat(transformed.getBytes(), length_data));
 		
 		try{
 			
-			dos.write(data);
+			this.dos = this.connection.openOutputStream();
+			this.dos.write(data);
+			this.dos.flush();
+			this.dos.close();
 			return true;
 			
 		}catch(IOException e){
@@ -90,25 +83,24 @@ public class BT_device {
 	
 	public Telegramm receiveMessage() throws ClassNotFoundException{
 		
-		byte[] message; 
+		String message;
+		byte[] data; 
 		int length_1 = 0;
 		int length_2 = 0;
 		int length = 0;
 		
 		try{
-			length_1 = dis.read()*16*16;
-			LCD.drawInt(length_1, 0, 0);
-			length_1 = dis.read();
-			LCD.drawInt(length_1, 0, 0);
-			message = new byte[length_1];
-			length = dis.read(message);
-			LCD.drawInt(length, 0, 2);
-			length_2 = dis.read()*16*16;
-			LCD.drawInt(length_2, 0, 1);
-			length_2 = dis.read();
-			LCD.drawInt(length_1, 0, 0);
-			LCD.drawInt(length_2, 0, 1);
-			LCD.drawInt(length, 0, 2);
+			this.dis = this.connection.openInputStream();
+			length_1 = this.dis.read()*16*16;
+			length_1 = this.dis.read();
+			data = new byte[length_1];
+			length = this.dis.read(data);
+			length_2 = this.dis.read()*16*16;
+			length_2 = this.dis.read();
+			this.dis.close();
+			
+			message = new String(data);
+			
 		}catch(IOException e){}
 		
 		return null;
