@@ -11,7 +11,8 @@ public class Ack_Telegram extends Telegramm {
 		
 	}
 	
-	public boolean getData(){
+	@Override
+	public boolean getDataBool(){
 		
 		return this.data;
 		
