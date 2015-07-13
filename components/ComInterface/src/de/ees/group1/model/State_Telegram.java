@@ -11,7 +11,8 @@ public class State_Telegram extends Telegramm{
 		
 	}
 	
-	public int getData(){
+	@Override
+	public int getDataInt(){
 		
 		return data;
 		

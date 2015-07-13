@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
 import lejos.nxt.LCD;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
@@ -14,6 +13,7 @@ import de.ees.group1.model.ProductionStep;
 import de.ees.group1.model.State_Telegram;
 import de.ees.group1.model.Step_Telegram;
 import de.ees.group1.model.Telegramm;
+import de.ees.group1.model.WorkstationType;
 
 public class BT_device {
 
@@ -81,48 +81,65 @@ public class BT_device {
 		
 	}
 	
-	public Telegramm receiveMessage() throws ClassNotFoundException{
+	public Telegramm receiveMessage() throws IOException{
 		
 		String message;
 		byte[] data; 
+		int type;
 		int length_1 = 0;
 		int length_2 = 0;
 		int length = 0;
 		
-		try{
-			this.dis = this.connection.openInputStream();
-			length_1 = this.dis.read()*16*16;
-			length_1 = this.dis.read();
-			data = new byte[length_1];
-			length = this.dis.read(data);
-			length_2 = this.dis.read()*16*16;
-			length_2 = this.dis.read();
-			this.dis.close();
+		this.dis = this.connection.openInputStream();
+		length_1 = this.dis.read()*16*16;
+		length_1 = length_1 + this.dis.read();
+		data = new byte[length_1];
+		length = this.dis.read(data);
+		length_2 = this.dis.read()*16*16;
+		length_2 = length_2 + this.dis.read();
+		
+		if(length_1 != length_2){
 			
-			message = new String(data);
+			System.out.println("Telegramm fehlerhaft");
+			return null;
 			
-		}catch(IOException e){}
+		}
+		
+		this.dis.close();
+		
+		type = data[2];
+		
+		switch(type){
+		case 0:
+			if(data[3]== 0){
+				return new Ack_Telegram(data[0], data[1], false);
+			}else{
+				return new Ack_Telegram(data[0], data[1], true);
+			}
+		case 1:
+			System.out.println("Fehlerhaftes Telegramm");
+			return null;
+		case 2:
+			ProductionStep prodStep = new ProductionStep();
+			prodStep.setMinQualityLevel(data[5]);
+			prodStep.setWorkTimeSeconds(data[4]);
+			switch(data[3]){
+			case 0:	prodStep.setType(WorkstationType.NONE);
+			case 1: prodStep.setType(WorkstationType.LATHE);
+			case 2: prodStep.setType(WorkstationType.DRILL);
+			default: prodStep.setType(WorkstationType.NONE);
+			}
+			return new Step_Telegram(data[0], data[1], prodStep);
+		case 3:
+			return new State_Telegram(data[0], data[1], data[2]);
+		default:
+		}
+		
+		message = new String(data);
+		System.out.println("Telegram empfangen: Unbekannter Typ" + message);
 		
 		return null;
 		
 	}
-		
-	public Ack_Telegram createMessage(int destination, int source, boolean data){
-		
-		return new Ack_Telegram(destination, source, data);
 				
-	}
-	
-	public Step_Telegram createMessage(int destination, int source, ProductionStep data){
-		
-		return new Step_Telegram(destination, source, data);
-				
-	}
-	
-	public State_Telegram createMessage(int destination, int source, int data){
-		
-		return new State_Telegram(destination, source, data);
-				
-	}
-		
 }
