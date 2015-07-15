@@ -11,7 +11,8 @@ public class Order_Telegram extends Telegramm{
 		
 	}
 	
-	public ProductionOrder getData(){
+	@Override
+	public ProductionOrder getDataOrder(){
 		
 		return data;
 		

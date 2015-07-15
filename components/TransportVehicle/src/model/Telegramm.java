@@ -38,6 +38,30 @@ public class Telegramm implements Serializable {
 		
 	}
 	
+	public boolean getDataBool(){
+		
+		return false;
+		
+	}
+	
+	public ProductionOrder getDataOrder(){
+		
+		return null;
+		
+	}
+	
+	public ProductionStep getDataStep(){
+		
+		return null;
+		
+	}
+	
+	public int getDataInt(){
+		
+		return 0;
+		
+	}
+	
 	public byte[] concat(byte[] a, byte[] b){
 		
 		int alen = a.length;

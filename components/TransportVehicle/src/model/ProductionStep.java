@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class ProductionStep implements Serializable {
 	
 	/**
-	 * version uid for serialization
+	 * version id for serialization
 	 */
 	private static final long serialVersionUID = 5310500383208577174L;
 
@@ -31,7 +31,7 @@ public class ProductionStep implements Serializable {
 	private int _minQualityLevel;
 	
 	/**
-	 * The time this step will consume
+	 * The time this step will consume in seconds
 	 */
 	private int _workTimeSeconds;
 	
