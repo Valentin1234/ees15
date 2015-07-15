@@ -11,8 +11,7 @@ public class Step_Telegram extends Telegramm {
 		
 	}
 	
-	@Override
-	public ProductionStep getDataObject(){
+	public ProductionStep getData(){
 		
 		return data;
 		
@@ -25,14 +24,7 @@ public class Step_Telegram extends Telegramm {
 		
 		message = "" + this.getDestination() + "" +this.getSource() + "" + this.getType();
 		
-		switch(this.data.getType()){
-		case NONE: message = message + 0;
-		case LATHE: message = message + 1;
-		case DRILL: message = message + 2;
-		default: 
-		}
-		
-		message = message + "" + this.data.getWorkTimeSeconds() + "" + this.data.getMinQualityLevel();
+		message = message + "" + this.data.getType() + "" + this.data.getWorkTimeSeconds() + "" + this.data.getMinQualityLevel();
 		
 		return message;
 		

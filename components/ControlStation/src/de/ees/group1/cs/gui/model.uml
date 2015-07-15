@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_lljjICbXEeWNje40cQ1bYA" name="RootElement">
+  <packageImport xmi:type="uml:PackageImport" xmi:id="_l2gwQCbXEeWNje40cQ1bYA">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_rWgOECbXEeWNje40cQ1bYA" name="IOrderController">
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_hio1YCbZEeWNje40cQ1bYA" name="orderCreated"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_jbZt0CbZEeWNje40cQ1bYA" name="orderRemoved"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_nlJKYCbZEeWNje40cQ1bYA" name="moveOrderUp"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_sgEMQCbZEeWNje40cQ1bYA" name="orderUpdated"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_13HbMCbZEeWNje40cQ1bYA" name="moveOrderDown"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_4WUokCbZEeWNje40cQ1bYA" name="getNextOrderId"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_thjJUCbXEeWNje40cQ1bYA" name="IConnectionController">
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_CSG8QCbaEeWNje40cQ1bYA" name="connectToNext"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_vKkVkCbXEeWNje40cQ1bYA" name="IWorkstationController">
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_9ZH0ECbZEeWNje40cQ1bYA" name="workstationTypeUpdated"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="__VKqACbZEeWNje40cQ1bYA" name="workstationQualityUpdated"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_Ry1KECbYEeWNje40cQ1bYA" name="MainWindow">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_pz5rgCbaEeWNje40cQ1bYA" name="listedorderpanel" type="_gV7VMCbaEeWNje40cQ1bYA" aggregation="shared" association="_pz2oMCbaEeWNje40cQ1bYA">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xekRICbaEeWNje40cQ1bYA"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xemtYCbaEeWNje40cQ1bYA" value="*"/>
+    </ownedAttribute>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_ULwJQCbYEeWNje40cQ1bYA" name="registerOrderController" concurrency="concurrent">
+      <ownedParameter xmi:type="uml:Parameter" xmi:id="_klpI0CbYEeWNje40cQ1bYA" name="c" type="_rWgOECbXEeWNje40cQ1bYA"/>
+    </ownedOperation>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_nRXIMCbYEeWNje40cQ1bYA" name="ergisterWorkstationController" visibility="public">
+      <ownedParameter xmi:type="uml:Parameter" xmi:id="_q1jnsCbYEeWNje40cQ1bYA" name="c" type="_vKkVkCbXEeWNje40cQ1bYA"/>
+    </ownedOperation>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_tCv4ACbYEeWNje40cQ1bYA" name="registerConnectionController">
+      <ownedParameter xmi:type="uml:Parameter" xmi:id="_x9abMCbYEeWNje40cQ1bYA" name="c" type="_thjJUCbXEeWNje40cQ1bYA"/>
+    </ownedOperation>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_YuVRsCbaEeWNje40cQ1bYA" name="updateOrderList"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_aJSMwCbaEeWNje40cQ1bYA" name="updateActiveOrder"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_b2ac8CbaEeWNje40cQ1bYA" name="updateWorkstationStatus"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_7SIu4CbYEeWNje40cQ1bYA" client="_Ry1KECbYEeWNje40cQ1bYA" supplier="_vKkVkCbXEeWNje40cQ1bYA"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_74mR8CbYEeWNje40cQ1bYA" client="_Ry1KECbYEeWNje40cQ1bYA" supplier="_thjJUCbXEeWNje40cQ1bYA"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_NOGvwCbaEeWNje40cQ1bYA" client="_Ry1KECbYEeWNje40cQ1bYA" supplier="_rWgOECbXEeWNje40cQ1bYA"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_gV7VMCbaEeWNje40cQ1bYA" name="ListedOrderPanel"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_pz2oMCbaEeWNje40cQ1bYA" visibility="public" memberEnd="_pz5rgCbaEeWNje40cQ1bYA _pz6SkCbaEeWNje40cQ1bYA">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_pz4dYCbaEeWNje40cQ1bYA" source="org.eclipse.papyrus">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_pz4dYSbaEeWNje40cQ1bYA" key="nature" value="UML_Nature"/>
+    </eAnnotations>
+    <ownedEnd xmi:type="uml:Property" xmi:id="_pz6SkCbaEeWNje40cQ1bYA" name="mainwindow" type="_Ry1KECbYEeWNje40cQ1bYA" association="_pz2oMCbaEeWNje40cQ1bYA">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_wOE5oCbaEeWNje40cQ1bYA" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_wOJLECbaEeWNje40cQ1bYA" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+</uml:Model>

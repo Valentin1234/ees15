@@ -11,8 +11,7 @@ public class Order_Telegram extends Telegramm{
 		
 	}
 	
-	@Override
-	public ProductionOrder getDataObject(){
+	public ProductionOrder getData(){
 		
 		return data;
 		
@@ -27,7 +26,7 @@ public class Order_Telegram extends Telegramm{
 		
 		message = message + data.getId();
 		
-		for(int i = 0; i< this.data.size(); i++){
+		for(int i = 0; i<= this.data.size(); i++){
 			
 			ProductionStep step = this.data.get(i);
 			

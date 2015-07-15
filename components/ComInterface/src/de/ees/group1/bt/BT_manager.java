@@ -84,6 +84,16 @@ public class BT_manager implements IComProvider{
 		
 	}
 	
+	public void getMessage(){
+		
+		try{
+			Telegramm tele = this.localDev.receiveMessage();
+		}catch(IOException e){
+			System.out.println(e.getMessage());
+		}
+		
+	}
+	
 	public void transmitProductionOrder(ProductionOrder order){
 
 		Telegramm tele = new Order_Telegram(16,0,order);
@@ -133,6 +143,18 @@ public class BT_manager implements IComProvider{
 	}
 	
 	public void transmitFinishedStep(){
+		
+		Telegramm tele = new Ack_Telegram(16,0,true);
+		
+		if(this.localDev.sendMessage(tele)){
+			
+			System.out.println("Datenübertragung erfolgreich");
+			
+		} else{
+			
+			System.out.println("Datenübertragung fehlgeschlagen");
+						
+		}
 		
 	}
 
