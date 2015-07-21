@@ -9,6 +9,8 @@ import lejos.nxt.LCD;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
 import model.Ack_Telegram;
+import model.Order_Telegram;
+import model.ProductionOrder;
 import model.ProductionStep;
 import model.State_Telegram;
 import model.Step_Telegram;
@@ -107,38 +109,61 @@ public class BT_device {
 		
 		this.dis.close();
 		
-		type = data[2];
+		type = data[3]-48;
 		
 		switch(type){
 		case 0:
-			if(data[3]== 0){
-				return new Ack_Telegram(data[0], data[1], false);
+			if((data[4]-48)== 0){
+				return new Ack_Telegram(16, data[2]-48, false);
 			}else{
-				return new Ack_Telegram(data[0], data[1], true);
+				return new Ack_Telegram(16, data[2]-48, true);
 			}
 		case 1:
-			System.out.println("Fehlerhaftes Telegramm");
-			return null;
-		case 2:
-			ProductionStep prodStep = new ProductionStep();
-			prodStep.setMinQualityLevel(data[5]);
-			prodStep.setWorkTimeSeconds(data[4]);
-			switch(data[3]){
-			case 0:	prodStep.setType(WorkstationType.NONE);
-			case 1: prodStep.setType(WorkstationType.LATHE);
-			case 2: prodStep.setType(WorkstationType.DRILL);
-			default: prodStep.setType(WorkstationType.NONE);
+			ProductionOrder order = new ProductionOrder((data[4]-48)*10+data[5]-48);
+			int size = data[6]-48;
+			for(int i = 0; i<size; i++){
+				order.add(this.restoreStep(data[i*5+8], data[i*5+9], data[i*5+10]));
 			}
-			return new Step_Telegram(data[0], data[1], prodStep);
+			return new Order_Telegram(16,data[2]-48,order);
+		case 2:
+			return new Step_Telegram(16, data[2]-48, restoreStep(data[4], data[5], data[6]));
 		case 3:
-			return new State_Telegram(data[0], data[1], data[2]);
+			return new State_Telegram(16, data[2]-48, data[3]-48);
 		default:
 		}
 		
 		message = new String(data);
 		System.out.println("Telegram empfangen: Unbekannter Typ" + message);
-		
+		//*/
 		return null;
+		
+	}
+	
+	public ProductionStep restoreStep(byte type, byte time, byte qual){
+		
+		ProductionStep prodStep = new ProductionStep();
+		prodStep.setMinQualityLevel(qual-48);
+		prodStep.setWorkTimeSeconds((time-47));
+		int typ = type-48;
+		switch(typ){
+		case 0:	{
+			prodStep.setType(WorkstationType.NONE);
+			break;
+		}
+		case 1: {
+			prodStep.setType(WorkstationType.LATHE);
+			break;
+		}
+		case 2: {
+			prodStep.setType(WorkstationType.DRILL);
+			break;
+		}
+		default: {
+			prodStep.setType(WorkstationType.NONE);
+			break;
+		}
+		}
+		return prodStep;
 		
 	}
 				

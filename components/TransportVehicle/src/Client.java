@@ -15,6 +15,7 @@ public class Client {
 	public static State state = new Kalibrierend();
 	static int OrderStep = 0;
 	static int NXT_Status = 0;
+	static int anzahlEingefahrenerStationen = 0;
 	
 	
 	public Client(){
@@ -28,9 +29,9 @@ public class Client {
 		return value;
 	}*/
 	
-	public void setState(State s){
+	/*public void setState(State s){
 		this.state = s;
-	}
+	}*/
 		
 	
 	public static void main(String[] args) throws InterruptedException {
@@ -42,4 +43,23 @@ public class Client {
 		state.step();	
 		}
 	}
+	
+	public static boolean isBlack() {
+		return lightSensor.getLightValue() < (werte.getBlack() + 4);
+	}
+	
+	public static boolean isGray() {
+		return Client.werte.getGrey2() + 3 > Client.lightSensor2.getLightValue()
+		&& (Client.werte.getGrey2() - 3 < Client.lightSensor2
+				.getLightValue())
+		&& Client.werte.getGrey2() + 3 > Client.lightSensor3
+				.getLightValue()
+		&& (Client.werte.getGrey2() - 3 < Client.lightSensor3
+				.getLightValue())
+		&& Client.werte.getGrey() + 3 > Client.lightSensor
+				.getLightValue()
+		&& (Client.werte.getGrey() - 3 < Client.lightSensor
+				.getLightValue());
+	}
+	
 }
